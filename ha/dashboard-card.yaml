@@ -1,0 +1,48 @@
+# Paste into a dashboard section ("Edit dashboard" → "+ Add card" → "Manual").
+# Replace `epriam_2026` with your product id for other products.
+type: vertical-stack
+cards:
+  - type: markdown
+    title: Cybex e-Priam 2026 — cheapest complete set
+    content: >-
+      {% set s = states.sensor.epriam_2026_total_lowest %}
+      {% if s and s.state not in ['unknown','unavailable'] %}
+      ## CHF {{ s.state | float | round(0) | int }} landed
+      {% for i in s.attributes.get('items', []) %}
+      - **{{ i.id }}** — {{ i.seller }} ({{ i.country }}): CHF {{ i.landed }}{% if i.kind == 'bundle' %} _(bundle)_{% endif %}{% if not i.refund_applied | default(false) and i.country != 'CH' %} · VAT refund not assumed{% endif %} · [open]({{ i.url }})
+      {% endfor %}
+      Swiss-only: **CHF {{ states('sensor.epriam_2026_total_lowest_home') }}** ·
+      all-time low: **CHF {{ states('sensor.epriam_2026_alltime_low_total') }}**
+      {% else %}
+      _No complete set yet — waiting for the first run._
+      {% endif %}
+  - type: history-graph
+    title: Lowest landed price (CHF)
+    hours_to_show: 336
+    entities:
+      - entity: sensor.epriam_2026_total_lowest
+        name: Complete set
+      - entity: sensor.epriam_2026_total_lowest_home
+        name: Complete set (CH)
+      - entity: sensor.epriam_2026_frame_lowest
+        name: Frame
+  - type: entities
+    title: Per component (lowest landed)
+    entities:
+      - entity: sensor.epriam_2026_frame_lowest
+        secondary_info: attribute
+        attribute: seller
+      - entity: sensor.epriam_2026_seat_pack_lowest
+      - entity: sensor.epriam_2026_carry_cot_lowest
+      - entity: sensor.epriam_2026_car_seat_lowest
+      - entity: sensor.epriam_2026_base_t_lowest
+      - type: divider
+      - entity: sensor.epriam_2026_style_set_lowest
+      - entity: sensor.epriam_2026_comfort_set_lowest
+      - entity: sensor.epriam_2026_style_set_cloud_t_lowest
+      - entity: sensor.epriam_2026_comfort_set_cloud_t_lowest
+      - type: divider
+      - entity: sensor.epriam_2026_last_run
+      - entity: sensor.epriam_2026_sources_ok
+      - entity: binary_sensor.epriam_2026_problem
+      - entity: sensor.epriam_2026_fx_eur

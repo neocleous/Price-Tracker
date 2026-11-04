@@ -1,0 +1,10 @@
+.git
+.github
+data
+reports
+tests
+ha
+.env
+.env.example
+__pycache__
+*.sqlite*

@@ -1,0 +1,30 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ha-price-tracker"
+version = "0.1.0"
+description = "Self-hosted, product-agnostic price tracker publishing lowest landed prices to Home Assistant via MQTT discovery"
+requires-python = ">=3.12"
+dependencies = [
+    "httpx[brotli]>=0.27",
+    "pyyaml>=6.0",
+    "beautifulsoup4>=4.12",
+    "lxml>=5.0",
+    "paho-mqtt>=2.0",
+    "pydantic>=2.5",
+]
+
+[project.optional-dependencies]
+browser = ["playwright>=1.45"]
+dev = ["pytest>=8.0"]
+
+[project.scripts]
+price-tracker = "tracker.__main__:main"
+
+[tool.setuptools.packages.find]
+include = ["tracker*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

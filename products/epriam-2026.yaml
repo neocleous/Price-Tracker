@@ -1,0 +1,310 @@
+# Cybex e-Priam 2026 (New Generation, "e-Priam 5") travel system
+#
+# Tracked as five required components plus seller bundles that cover several
+# of them at once. The tracker reports the cheapest way to obtain the complete
+# set (landed in CHF) and the cheapest Swiss-only alternative.
+#
+# Any colour is accepted — the cheapest in-stock variant wins and the colour is
+# visible in the entity attributes (name/sku).
+#
+# Cybex article numbers (prefix 5260002xx = frame, 5260002/3xx = seat pack and
+# carry cot, 523000xxx = Cloud T, 522000xxx = Base T) appear as `sku` on most
+# shops and are used to disambiguate variant pages.
+
+id: epriam-2026
+name: Cybex e-Priam 2026
+description: >
+  e-Priam frame (New Generation) + Priam Seat Pack + Priam Fold Lux Carry Cot
+  + Cloud T i-Size + Base T. Lite Cot tracked as optional (no 2026 listings found).
+
+imports:
+  home_country: CH
+  reporting_currency: CHF
+  import_vat: 0.081          # Swiss VAT on import, charged on goods + shipping
+  duty: 0.0                  # Swiss industrial tariffs abolished 2024-01-01
+  routes:
+    DE:                      # collected at the German parcel box, self-imported
+      mode: collect
+      local_vat: 0.19
+      default_shipping: 0.0  # most DE shops ship free above ~EUR 50–100
+      refund_possible: true  # only applied for sources marked vat_refund: yes
+  default_route:             # any other EU seller: shipped to the DE box, EU VAT not refundable
+    mode: collect
+    local_vat: 0.20
+    default_shipping: 25.0
+    refund_possible: false
+
+alerts:
+  price_drop_pct: 5          # per-source day-over-day drop that triggers an alert
+  require_in_stock: true     # out-of-stock offers never count as "lowest"
+  stale_after_hours: 36      # observations older than this are ignored
+
+schedule:
+  timezone: Europe/Zurich
+  hours: "7-23,0"            # hourly 07:00–23:00 plus 00:00
+  minute: 0
+
+# ---------------------------------------------------------------------------
+components:
+  - id: frame
+    name: e-Priam frame 2026
+    bounds: {min: 700, max: 1700}
+    sources:
+      - id: cybex_ch
+        seller: Cybex CH
+        url: https://www.cybex-online.com/de/ch/p/st-pl-e-priam-frame-3-style.html
+        country: CH
+        match: {name_regex: "e-Priam Frame"}
+      - id: cybex_de
+        seller: Cybex DE
+        url: https://www.cybex-online.com/de/de/p/st-pl-e-priam-frame-3-style.html
+        country: DE
+        vat_refund: "no"        # manufacturer web shop, no export certificate
+        match: {name_regex: "e-Priam Frame"}
+      - id: babywalz_ch
+        seller: baby-walz CH
+        url: https://www.baby-walz.ch/de/p/cybex-platinum-gestell-epriam-style-matt-black-8375445/
+        country: CH
+        match: {name_regex: "Gestell ePRIAM"}
+      - id: babywalz_de
+        seller: baby-walz DE
+        url: https://www.baby-walz.de/p/cybex-platinum-gestell-epriam-style-matt-black-8375445/
+        country: DE
+        interval_hours: 2       # rate-limits aggressively (HTTP 429)
+        match: {name_regex: "Gestell ePRIAM"}
+      - id: mypram_de
+        seller: mypram DE
+        url: https://www.mypram.com/de/cybex-e-priam-style-kinderwagengestell.html
+        country: DE
+        notes: price via meta tags only (no JSON-LD offer)
+      - id: kindermaxx_de
+        seller: Kindermaxx DE
+        url: https://www.kindermaxx.de/en/brand-a-z/cybex/cybex-strollers/cybex-e-priam-5-frame-incl.-seat-hardpart/526000231
+        country: DE
+        match: {name_regex: "E-Priam 5 Frame"}
+
+  - id: seat_pack
+    name: Priam Seat Pack 2026
+    bounds: {min: 120, max: 450}
+    sources:
+      - id: mysnowflake_ch
+        seller: MY SNOWFLAKE CH
+        url: https://mysnowflake.ch/en/products/cybex-priam-e-priam-style-seat-pack-comfort-sepia-black
+        country: CH
+        match: {name_regex: "Seat Pack"}
+      - id: babywalz_ch
+        seller: baby-walz CH
+        url: https://www.baby-walz.ch/de/p/cybex-platinum-8375950
+        country: CH
+        match: {name_regex: "Sitzeinheit PRIAM, ePRIAM Style"}
+      - id: babywalz_de
+        seller: baby-walz DE
+        url: https://www.baby-walz.de/p/cybex-platinum-sitzeinheit-priam-epriam-style-sepia-black-8375488/
+        country: DE
+        interval_hours: 2
+        match: {name_regex: "Sitzeinheit PRIAM, ePRIAM Style"}
+
+  - id: carry_cot
+    name: Priam Fold Lux Carry Cot 2026
+    bounds: {min: 200, max: 700}
+    sources:
+      - id: babywalz_ch
+        seller: baby-walz CH
+        url: https://www.baby-walz.ch/de/p/cybex-platinum-tragewanne-priam-epriam-style-city-grey-8375550/
+        country: CH
+        match: {name_regex: "Tragewanne PRIAM, ePRIAM Style"}
+      - id: babywalz_de
+        seller: baby-walz DE
+        url: https://www.baby-walz.de/p/cybex-platinum-tragewanne-priam-epriam-style-city-grey-8375550/
+        country: DE
+        interval_hours: 2
+        match: {name_regex: "Tragewanne PRIAM, ePRIAM Style"}
+      - id: bambinou_fr
+        seller: Bambinou FR
+        url: https://www.bambinou.com/nacelle-pliable-luxe-priam-2026-cybex
+        country: FR
+        interval_hours: 2
+        match: {name_regex: "Nacelle pliable luxe Priam 2026"}
+
+  - id: lite_cot
+    name: Priam Lite Cot
+    required: false
+    bounds: {min: 80, max: 350}
+    sources: []                 # no 2026 / New Generation listings found at CH or DE shops (2026-11-04)
+
+  - id: car_seat
+    name: Cloud T i-Size
+    bounds: {min: 120, max: 450}
+    sources:
+      - id: cybex_ch
+        seller: Cybex CH
+        url: https://www.cybex-online.com/de/ch/p/cs-pl-cloud-t-i-size.html
+        country: CH
+        match: {name_regex: "Cloud T"}
+      - id: cybex_de
+        seller: Cybex DE
+        url: https://www.cybex-online.com/de/de/p/cs-pl-cloud-t-i-size.html
+        country: DE
+        vat_refund: "no"
+        match: {name_regex: "Cloud T"}
+      - id: babywalz_ch
+        seller: baby-walz CH
+        url: https://www.baby-walz.ch/de/p/cybex-platinum-babyschale-cloud-t-sepia-black-7860668/
+        country: CH
+        match: {name_regex: "Cloud T", name_exclude_regex: "Urban Mobility"}
+      - id: babywalz_de
+        seller: baby-walz DE
+        url: https://www.baby-walz.de/p/cybex-platinum-babyschale-cloud-t-sepia-black-7860668/
+        country: DE
+        interval_hours: 2
+        match: {name_regex: "Cloud T", name_exclude_regex: "Urban Mobility"}
+      - id: kindermaxx_de
+        seller: Kindermaxx DE
+        url: https://www.kindermaxx.de/en/car-seats/baby-car-seat-0-13-kg/cybex-cloud-t-i-size-baby-car-seat
+        country: DE
+        match: {name_regex: "Cloud T"}
+      - id: mysnowflake_ch
+        seller: MY SNOWFLAKE CH
+        url: https://mysnowflake.ch/en/collections/cybex/products/cybex-cloud-t-i-size-plus-babyschale-sepia-black
+        country: CH
+        notes: Plus variant only
+        match: {name_regex: "Cloud T"}
+      - id: bambinou_fr
+        seller: Bambinou FR
+        url: https://www.bambinou.com/siege-auto-cloud-t-i-size-groupe-0-plus-cybex
+        country: FR
+        interval_hours: 2
+        match: {name_regex: "Cloud T"}
+
+  - id: base_t
+    name: Base T
+    bounds: {min: 100, max: 350}
+    sources:
+      - id: cybex_ch
+        seller: Cybex CH
+        url: https://www.cybex-online.com/de/ch/p/cs-pl-base-t.html
+        country: CH
+        match: {name_regex: "Base.T"}
+      - id: cybex_de
+        seller: Cybex DE
+        url: https://www.cybex-online.com/de/de/p/cs-pl-base-t.html
+        country: DE
+        vat_refund: "no"
+        match: {name_regex: "Base.T"}
+      - id: babywalz_ch
+        seller: baby-walz CH
+        url: https://www.baby-walz.ch/de/p/cybex-platinum-isofix-basis-base-t-fuer-cloud-t-sirona-t-7860536/
+        country: CH
+        match: {name_regex: "Base T"}
+      - id: babywalz_de
+        seller: baby-walz DE
+        url: https://www.baby-walz.de/p/cybex-platinum-isofix-basis-base-t-fuer-cloud-t-sirona-t-7860536/
+        country: DE
+        interval_hours: 2
+        match: {name_regex: "Base T"}
+      - id: kindermaxx_de
+        seller: Kindermaxx DE
+        url: https://www.kindermaxx.de/en/car-seats/isofix-base/cybex-base-t-i-size-base-station
+        country: DE
+        match: {name_regex: "Base T"}
+      - id: mysnowflake_ch
+        seller: MY SNOWFLAKE CH
+        url: https://mysnowflake.ch/en/collections/cybex/products/cybex-base-t-schwarz
+        country: CH
+        match: {name_regex: "Base T"}
+
+# ---------------------------------------------------------------------------
+# Seller SKUs covering several components. The tracker combines bundles with
+# individually-bought components and picks the cheapest complete set.
+bundles:
+  - id: style_frame_seat
+    name: e-Priam Style — frame + seat pack
+    covers: [frame, seat_pack]
+    bounds: {min: 900, max: 2200}
+    sources:
+      - id: mysnowflake_ch
+        seller: MY SNOWFLAKE CH
+        url: https://mysnowflake.ch/en/products/cybex-e-priam-style-matt-black-sepia-black
+        country: CH
+        match: {sku_regex: "^\\d+_\\d+$"}          # two article numbers = frame + seat
+      - id: bambinou_fr
+        seller: Bambinou FR
+        url: https://www.bambinou.com/poussette-e-priam-style-2026-a-assistance-electrique-cybex
+        country: FR
+        interval_hours: 2
+        notes: "Châssis e-Priam 2026 + habillage de siège Priam Style 2026"
+
+  - id: style_set
+    name: e-Priam Style — frame + seat pack + carry cot
+    covers: [frame, seat_pack, carry_cot]
+    bounds: {min: 1300, max: 2800}
+    sources:
+      - id: cybex_ch
+        seller: Cybex CH
+        url: https://www.cybex-online.com/de/ch/p/set-st-pl-e-priam-3-style.html
+        country: CH
+      - id: cybex_de
+        seller: Cybex DE
+        url: https://www.cybex-online.com/de/de/p/set-st-pl-e-priam-3-style.html
+        country: DE
+        vat_refund: "no"
+      - id: mysnowflake_ch
+        seller: MY SNOWFLAKE CH
+        url: https://mysnowflake.ch/en/products/cybex-e-priam-style-matt-black-sepia-black
+        country: CH
+        match: {sku_regex: "^\\d+_\\d+_\\d+$"}     # three article numbers = frame + seat + cot
+      - id: kindermaxx_de
+        seller: Kindermaxx DE
+        url: https://www.kindermaxx.de/en/pushchair/combi-pram/cybex-e-priam-5-style-kombikinderwagen/526000255-526000297-526000353.16
+        country: DE
+        match: {name_regex: "E-Priam 5 Style"}
+
+  - id: comfort_set
+    name: e-Priam Comfort — frame + seat + carry cot (Comfort fabrics)
+    covers: [frame, seat_pack, carry_cot]
+    bounds: {min: 1200, max: 2600}
+    sources:
+      - id: cybex_ch
+        seller: Cybex CH
+        url: https://www.cybex-online.com/de/ch/p/st-pl-e-priam-3.html
+        country: CH
+      - id: cybex_de
+        seller: Cybex DE
+        url: https://www.cybex-online.com/de/de/p/st-pl-e-priam-3.html
+        country: DE
+        vat_refund: "no"
+      - id: kindermaxx_de
+        seller: Kindermaxx DE
+        url: https://www.kindermaxx.de/en/pushchair/combi-pram/cybex-e-priam-5-comfort-stroller/526000053
+        country: DE
+        match: {name_regex: "E-Priam 5 Comfort"}
+      - id: mypram_de
+        seller: mypram DE
+        url: https://www.mypram.com/de/cybex-e-priam-comfort-kombikinderwagen-rosegold-sepia-black.html
+        country: DE
+
+  - id: style_set_cloud_t
+    name: e-Priam Style 3-in-1 — frame + seat + carry cot + Cloud T
+    covers: [frame, seat_pack, carry_cot, car_seat]
+    bounds: {min: 1500, max: 3200}
+    sources:
+      - id: kindermaxx_de
+        seller: Kindermaxx DE
+        url: https://www.kindermaxx.de/en/pushchair/combi-pram/cybex-e-priam-5-style-stroller-set-3-in-1-incl.-cloud-t-i-size-car-seat/cybex-e-priam-style-set3in1-cloud-t.16
+        country: DE
+        match: {name_regex: "E-Priam 5 Style"}
+
+  - id: comfort_set_cloud_t
+    name: e-Priam Comfort 3-in-1 — frame + seat + carry cot + Cloud T
+    covers: [frame, seat_pack, carry_cot, car_seat]
+    bounds: {min: 1500, max: 3200}
+    sources:
+      - id: kindermaxx_de
+        seller: Kindermaxx DE
+        url: https://www.kindermaxx.de/en/pushchair/combi-pram/cybex-e-priam-5-comfort-stroller-set-3-in-1-incl.-cloud-t-i-size/cybex-e-priam-comfort-set3in1-cloud-t
+        country: DE
+        match: {name_regex: "E-Priam 5 Comfort"}
+
+# Candidate sources that returned HTTP 403 (bot wall) from a plain HTTP client
+# on 2026-11-04 and need the Playwright build: galaxus.ch, toppreise.ch,
+# idealo.de, geizhals.de. babymarkt.de returned 429 on first contact.

@@ -1,0 +1,20 @@
+services:
+  price-tracker:
+    build:
+      context: .
+      args:
+        WITH_PLAYWRIGHT: "false"   # "true" adds headless Chromium (~450 MB) for bot-walled shops
+    image: price-tracker:local
+    container_name: price-tracker
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      TZ: Europe/Zurich
+    volumes:
+      - ./data:/data                  # SQLite history + state
+      - ./products:/config/products   # product definitions (edit, then restart)
+    # No ports: the container only talks outbound (HTTPS to shops, MQTT to the broker).
+    mem_limit: 512m                   # 1500m when WITH_PLAYWRIGHT=true
+    logging:
+      driver: json-file
+      options: {max-size: "10m", max-file: "3"}

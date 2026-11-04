@@ -1,0 +1,163 @@
+blueprint:
+  name: Price tracker alerts
+  description: >-
+    Push notifications for a ha-price-tracker product: new all-time low, per-seller
+    price drop, back in stock, tracker errors, an optional "problem" sensor, and an
+    optional target price on any sensor. One automation per product.
+  domain: automation
+  author: neocleous
+  source_url: https://github.com/neocleous/price-tracker/blob/main/ha/blueprints/price_tracker_alerts.yaml
+  homeassistant:
+    min_version: "2024.10.0"
+  input:
+    tracker:
+      name: Tracker
+      icon: mdi:tag-search
+      input:
+        alert_event:
+          name: Alerts event entity
+          description: The "Alerts" event entity of the tracker device (event.<product>_alerts).
+          selector:
+            entity:
+              domain: event
+              integration: mqtt
+        problem_sensors:
+          name: Problem sensors (optional)
+          description: Tracker "problem" binary sensors; notifies when one stays on for 15 minutes.
+          default: []
+          selector:
+            entity:
+              domain: binary_sensor
+              device_class: problem
+              multiple: true
+    notifications:
+      name: Notifications
+      icon: mdi:cellphone-message
+      input:
+        notify_services:
+          name: Mobile app notify services
+          description: >-
+            Companion-app notify service names without the "notify." prefix, e.g.
+            mobile_app_my_phone. (mobile_app exposes no notify entities, so this is a text list.)
+          selector:
+            text:
+              multiple: true
+        event_types:
+          name: Alert types to send
+          default: [new_low, price_drop, back_in_stock, tracker_error]
+          selector:
+            select:
+              multiple: true
+              options:
+                - new_low
+                - price_drop
+                - back_in_stock
+                - tracker_error
+        critical_new_low:
+          name: New-low alerts bypass Focus / silent mode
+          default: false
+          selector:
+            boolean: {}
+    target:
+      name: Target price (optional)
+      icon: mdi:bullseye-arrow
+      collapsed: true
+      input:
+        target_sensors:
+          name: Sensors to watch
+          description: Usually the "Lowest complete set" sensor. Leave empty to disable.
+          default: []
+          selector:
+            entity:
+              domain: sensor
+              device_class: monetary
+              multiple: true
+        target_price:
+          name: Notify when a watched sensor drops below
+          default: 0
+          selector:
+            number:
+              min: 0
+              max: 100000
+              step: 1
+              mode: box
+
+mode: queued
+max_exceeded: silent
+
+variables:
+  notify_services: !input notify_services
+  event_types: !input event_types
+  critical_new_low: !input critical_new_low
+  target_price: !input target_price
+
+triggers:
+  - trigger: state
+    entity_id: !input alert_event
+    id: alert
+    not_from:
+      - unavailable
+      - unknown
+  - trigger: state
+    entity_id: !input problem_sensors
+    to: "on"
+    for:
+      minutes: 15
+    id: problem
+  - trigger: numeric_state
+    entity_id: !input target_sensors
+    below: !input target_price
+    id: target
+
+conditions:
+  - condition: or
+    conditions:
+      - condition: trigger
+        id: problem
+      - condition: trigger
+        id: target
+      - condition: and
+        conditions:
+          - condition: trigger
+            id: alert
+          - condition: template
+            value_template: "{{ trigger.to_state.attributes.event_type in event_types }}"
+
+actions:
+  - variables:
+      a: "{{ trigger.to_state.attributes if trigger.to_state is defined else {} }}"
+      kind: >-
+        {% if trigger.id == 'alert' %}{{ a.event_type }}{% else %}{{ trigger.id }}{% endif %}
+      cur: "{{ a.currency | default('') }}"
+      title: >-
+        {% if kind == 'new_low' %}🔻 New low: {{ a.label }}
+        {% elif kind == 'price_drop' %}📉 {{ a.label }} −{{ a.pct }}%
+        {% elif kind == 'back_in_stock' %}📦 Back in stock: {{ a.label }}
+        {% elif kind == 'tracker_error' %}⚠️ Price tracker error
+        {% elif kind == 'problem' %}⚠️ Price tracker problem
+        {% elif kind == 'target' %}🎯 Target price reached
+        {% endif %}
+      message: >-
+        {% if kind == 'new_low' %}{{ cur }} {{ a.value }} at {{ a.seller }} ({{ a.country }}), was {{ a.previous }}
+        {% elif kind == 'price_drop' %}{{ a.seller }}: {{ cur }} {{ a.value }} (was {{ a.previous }})
+        {% elif kind == 'back_in_stock' %}{{ a.seller }}, {{ cur }} {{ a.value }}
+        {% elif kind == 'tracker_error' %}{{ a.message }}
+        {% elif kind == 'problem' %}{{ trigger.to_state.name }} has been on for 15 min — check the container logs.
+        {% elif kind == 'target' %}{{ trigger.to_state.name }}: {{ trigger.to_state.state }} {{ trigger.to_state.attributes.unit_of_measurement }} (target {{ target_price }})
+        {% endif %}
+      url: "{{ a.url | default('') }}"
+      tag: "price-tracker-{{ kind }}-{{ a.scope | default(trigger.entity_id) }}"
+  - repeat:
+      for_each: "{{ notify_services }}"
+      sequence:
+        - action: "notify.{{ repeat.item }}"
+          data:
+            title: "{{ title | trim }}"
+            message: "{{ message | trim }}"
+            data:
+              tag: "{{ tag }}"
+              group: price-tracker
+              url: "{{ url if url else none }}"
+              clickAction: "{{ url if url else none }}"
+              push:
+                interruption-level: "{{ 'critical' if (kind == 'new_low' and critical_new_low) else 'active' }}"

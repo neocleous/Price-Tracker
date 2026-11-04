@@ -1,0 +1,42 @@
+# Fetches every configured source from GitHub's network, never publishes to MQTT,
+# and commits the report so source health is visible without access to the NAS.
+name: validate-sources
+on:
+  workflow_dispatch:
+    inputs:
+      product:
+        description: product file (relative to products/)
+        default: epriam-2026.yaml
+  schedule:
+    - cron: "17 5 * * *"   # daily 05:17 UTC
+permissions:
+  contents: write
+concurrency:
+  group: validate-sources
+  cancel-in-progress: false
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -e .
+      - name: Validate
+        id: validate
+        continue-on-error: true
+        env:
+          PRODUCT: ${{ github.event.inputs.product || 'epriam-2026.yaml' }}
+          LOG_LEVEL: WARNING
+        run: |
+          base="${PRODUCT%.yaml}"
+          python -m tracker validate "products/$PRODUCT" --report "reports/$base.md" --json "reports/$base.json" --workers 4
+      - name: Commit report
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add reports/
+          git diff --cached --quiet && echo "no changes" && exit 0
+          git commit -m "chore(reports): source validation $(date -u +%Y-%m-%dT%H:%MZ)"
+          git push
