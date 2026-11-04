@@ -146,6 +146,9 @@ actions:
         {% elif kind == 'problem' %}{{ trigger.to_state.name }} has been on for 15 min — check the container logs.
         {% elif kind == 'target' %}{{ trigger.to_state.name }}: {{ trigger.to_state.state }} {{ trigger.to_state.attributes.unit_of_measurement }} (target {{ target_price }})
         {% endif %}
+        {% if a.delivery is defined and a.delivery %}
+
+        {{ a.delivery }}{% endif %}
       url: "{{ a.url | default('') }}"
       tag: "price-tracker-{{ kind }}-{{ a.scope | default(trigger.entity_id) }}"
   - repeat:

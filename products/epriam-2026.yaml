@@ -22,17 +22,20 @@ imports:
   reporting_currency: CHF
   import_vat: 0.081          # Swiss VAT on import, charged on goods + shipping
   duty: 0.0                  # Swiss industrial tariffs abolished 2024-01-01
+  home_delivery_note: "🇨🇭 Swiss shop — deliver to home address"
   routes:
     DE:                      # collected at the German parcel box, self-imported
       mode: collect
       local_vat: 0.19
       default_shipping: 0.0  # most DE shops ship free above ~EUR 50–100
       refund_possible: true  # only applied for sources marked vat_refund: yes
+      delivery_note: "🇩🇪 DELIVER TO THE GERMAN PARCEL BOX — collect and declare at the border (QuickZoll, 8.1 % VAT); ask the shop for an Ausfuhrschein"
   default_route:             # any other EU seller: shipped to the DE box, EU VAT not refundable
     mode: collect
     local_vat: 0.20
     default_shipping: 25.0
     refund_possible: false
+    delivery_note: "🇪🇺 EU shop — DELIVER TO THE GERMAN PARCEL BOX (German address at checkout); collect and declare at the border (8.1 % VAT)"
 
 alerts:
   price_drop_pct: 5          # per-source day-over-day drop that triggers an alert

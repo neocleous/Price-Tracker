@@ -124,6 +124,7 @@ class Route(BaseModel):
     default_shipping: float = 0.0  # in the seller's currency
     clearance_fee: float = 0.0  # in the reporting currency
     refund_possible: bool = True
+    delivery_note: str | None = None  # shown in alerts, e.g. "Deliver to the German parcel box"
 
 
 class ImportRules(BaseModel):
@@ -134,10 +135,19 @@ class ImportRules(BaseModel):
     routes: dict[str, Route]
     default_route: Route
 
+    home_delivery_note: str | None = None  # shown in alerts for home-country sellers
+
     def route_for(self, country: str) -> Route:
         if country == self.home_country:
-            return Route(mode="domestic")
+            return Route(mode="domestic", delivery_note=self.home_delivery_note)
         return self.routes.get(country, self.default_route)
+
+    def delivery_note(self, country: str) -> str:
+        r = self.route_for(country)
+        if r.delivery_note:
+            return r.delivery_note
+        return {"domestic": f"Delivery within {self.home_country}", "collect": f"Collect in {country}",
+                "ship": f"Ships from {country} to {self.home_country}"}[r.mode]
 
 
 class Alerts(BaseModel):

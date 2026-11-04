@@ -213,7 +213,8 @@ def _events_and_alltime(product, store: Store, snap: Snapshot, comp_best, bundle
                         "value": round(value, 2),
                         "previous": round(float(prev["value"]), 2),
                         "currency": product.imports.reporting_currency,
-                        **({"seller": best.seller, "url": best.url, "country": best.country} if best else {}),
+                        **({"seller": best.seller, "url": best.url, "country": best.country,
+                            "delivery": product.imports.delivery_note(best.country)} if best else {}),
                     }
                 )
         else:
@@ -231,6 +232,7 @@ def _events_and_alltime(product, store: Store, snap: Snapshot, comp_best, bundle
     # per-source price drops / back in stock, relative to the previous ok observation of that source
     thr = product.alerts.price_drop_pct / 100.0
     names = {g.id: g.name for g in (*product.components, *product.bundles)}
+    countries = {(g.id, s.id): s.country for g in (*product.components, *product.bundles) for s in g.sources}
     for obs_id in sorted(new_obs_ids):
         row = store.observation(obs_id)
         if row is None or not row["ok"]:
@@ -241,6 +243,7 @@ def _events_and_alltime(product, store: Store, snap: Snapshot, comp_best, bundle
         if prev is None:
             continue
         cur_l, prev_l = float(row["landed"]), float(prev["landed"])
+        country = countries.get((grp_id, sid), "")
         base = {
             "product": pid,
             "scope": grp_id,
@@ -249,6 +252,8 @@ def _events_and_alltime(product, store: Store, snap: Snapshot, comp_best, bundle
             "url": row["url"],
             "value": round(cur_l, 2),
             "currency": product.imports.reporting_currency,
+            "country": country,
+            "delivery": product.imports.delivery_note(country) if country else "",
         }
         if prev_l > 0 and (prev_l - cur_l) / prev_l >= thr:
             events.append(
