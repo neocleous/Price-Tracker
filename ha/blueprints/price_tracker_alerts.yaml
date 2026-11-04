@@ -95,7 +95,8 @@ triggers:
   - trigger: state
     entity_id: !input alert_event
     id: alert
-    not_from:
+    # guard the NEW state, not the old one: the first event ever comes *from* unknown
+    not_to:
       - unavailable
       - unknown
   - trigger: state
