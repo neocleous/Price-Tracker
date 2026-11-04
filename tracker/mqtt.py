@@ -59,14 +59,30 @@ class Publisher:
             c.tls_set()
         c.will_set(f"{self.s.topic_prefix}/bridge/availability", "offline", retain=True)
         c.reconnect_delay_set(2, 60)
-        c.connect(self.s.mqtt_host, self.s.mqtt_port, keepalive=60)
+        result: dict = {}
+
+        def _on_connect(client, userdata, flags, reason_code, properties=None):
+            result["rc"] = reason_code
+
+        c.on_connect = _on_connect
+        try:
+            c.connect(self.s.mqtt_host, self.s.mqtt_port, keepalive=60)
+        except OSError as e:
+            raise ConnectionError(f"MQTT {self.s.mqtt_host}:{self.s.mqtt_port} unreachable: {e}") from e
         c.loop_start()
         deadline = time.time() + 15
-        while not c.is_connected() and time.time() < deadline:
+        while not c.is_connected() and "rc" not in result and time.time() < deadline:
             time.sleep(0.1)
         if not c.is_connected():
             c.loop_stop()
-            raise ConnectionError(f"MQTT connect to {self.s.mqtt_host}:{self.s.mqtt_port} timed out")
+            rc = result.get("rc")
+            if rc is not None:
+                # broker answered the CONNECT with a refusal (e.g. "Not authorized", "Bad user name or password")
+                raise ConnectionError(
+                    f"MQTT broker {self.s.mqtt_host}:{self.s.mqtt_port} refused the connection: {rc} "
+                    f"(user={self.s.mqtt_user!r}) — check the Mosquitto Logins list and .env"
+                )
+            raise ConnectionError(f"MQTT connect to {self.s.mqtt_host}:{self.s.mqtt_port} timed out (no CONNACK in 15 s)")
         self._client = c
         self._pub(f"{self.s.topic_prefix}/bridge/availability", "online", retain=True)
         log.info("MQTT connected to %s:%s", self.s.mqtt_host, self.s.mqtt_port)

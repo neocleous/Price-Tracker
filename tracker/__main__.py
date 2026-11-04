@@ -15,6 +15,7 @@ import datetime as dt
 import json
 import logging
 import sys
+import time
 from pathlib import Path
 
 from .compute import build_snapshot
@@ -65,7 +66,16 @@ def cmd_schedule(args, settings: Settings):
     pub = Publisher(settings, store)
     runner = Runner(settings, store, pub)
     prods = _products(settings, args.product, None)
-    pub.connect()
+    # keep retrying the broker instead of crash-looping the container
+    delay = 10
+    while True:
+        try:
+            pub.connect()
+            break
+        except ConnectionError as e:
+            logging.getLogger(__name__).error("%s — retrying in %d s", e, delay)
+            time.sleep(delay)
+            delay = min(delay * 2, 300)
     for p in prods:
         pub.publish_discovery(p)
     if args.run_now:
