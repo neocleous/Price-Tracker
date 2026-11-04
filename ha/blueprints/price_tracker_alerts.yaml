@@ -157,7 +157,11 @@ actions:
             data:
               tag: "{{ tag }}"
               group: price-tracker
+              # tapping the notification opens the shop page (iOS: url, Android: clickAction)
               url: "{{ url if url else none }}"
               clickAction: "{{ url if url else none }}"
+              # explicit button as well, so the link is visible without knowing to tap the banner
+              actions: >-
+                {{ [{'action': 'URI', 'title': 'Open shop', 'uri': url}] if url else [] }}
               push:
                 interruption-level: "{{ 'critical' if (kind == 'new_low' and critical_new_low) else 'active' }}"

@@ -50,16 +50,29 @@ components:
     name: e-Priam frame 2026
     bounds: {min: 700, max: 1700}
     sources:
+      # Cybex prices frame colours differently (Chrome/Matt Black < Rosegold/Champagne Gold);
+      # each colour has its own product id, so the two price points are tracked separately.
       - id: cybex_ch
         seller: Cybex CH
+        url: https://www.cybex-online.com/de/ch/p/10108491.html     # Chrome (same price as Matt Black 10108498)
+        country: CH
+        match: {name_regex: "e-Priam Frame"}
+      - id: cybex_ch_rosegold
+        seller: Cybex CH (Rosegold)
         url: https://www.cybex-online.com/de/ch/p/st-pl-e-priam-frame-3-style.html
         country: CH
         match: {name_regex: "e-Priam Frame"}
       - id: cybex_de
         seller: Cybex DE
-        url: https://www.cybex-online.com/de/de/p/st-pl-e-priam-frame-3-style.html
+        url: https://www.cybex-online.com/de/de/p/10108491.html     # Chrome
         country: DE
         vat_refund: "no"        # manufacturer web shop, no export certificate
+        match: {name_regex: "e-Priam Frame"}
+      - id: cybex_de_rosegold
+        seller: Cybex DE (Rosegold)
+        url: https://www.cybex-online.com/de/de/p/st-pl-e-priam-frame-3-style.html
+        country: DE
+        vat_refund: "no"
         match: {name_regex: "e-Priam Frame"}
       - id: babywalz_ch
         seller: baby-walz CH
@@ -258,6 +271,12 @@ bundles:
         url: https://www.kindermaxx.de/en/pushchair/combi-pram/cybex-e-priam-5-style-kombikinderwagen/526000255-526000297-526000353.16
         country: DE
         match: {name_regex: "E-Priam 5 Style"}
+      - id: bambinou_fr
+        seller: Bambinou FR
+        url: https://www.bambinou.com/pack-poussette-e-priam-style-2026-nacelle-pliable-luxe-cybex
+        country: FR
+        interval_hours: 2
+        notes: "Pack: châssis + habillage de siège + nacelle pliable luxe 2026"
 
   - id: comfort_set
     name: e-Priam Comfort — frame + seat + carry cot (Comfort fabrics)
@@ -305,6 +324,12 @@ bundles:
         country: DE
         match: {name_regex: "E-Priam 5 Comfort"}
 
-# Candidate sources that returned HTTP 403 (bot wall) from a plain HTTP client
-# on 2026-11-04 and need the Playwright build: galaxus.ch, toppreise.ch,
-# idealo.de, geizhals.de. babymarkt.de returned 429 on first contact.
+# Coverage notes (2026-11-05):
+# - Bot-walled from a plain HTTP client (403): galaxus.ch, toppreise.ch, idealo.de,
+#   geizhals.de, tausendkind.ch, amazon.de (503). Need `parser: playwright` from the NAS.
+# - babymarkt.de: 429 from datacenter IPs; untested from the NAS. Product URLs still needed.
+# - babyone.de, kidsroom.de, windeln.de, babyartikel.de, babyprofi.de, babyjoe.ch,
+#   baby-rose.ch, orchestra.ch, manor.ch: search pages are JS-rendered and no 2026
+#   e-Priam product URLs were found via web search — add direct product URLs when known.
+# - Cybex sells the 2026 seat pack and Fold Lux carry cot only inside the set configurator
+#   (no standalone product pages in CH/DE).

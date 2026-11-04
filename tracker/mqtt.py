@@ -191,17 +191,18 @@ class Publisher:
             for src in grp.sources:
                 sid = _slug(src.id)
                 key = f"value_json.sources['{src.id}']"
+                # per-shop entities are diagnostic: kept out of auto-generated dashboards, still on the device page
                 add("sensor", f"{gid}_{sid}", f"{label} @ {src.seller}", state_topic=topic,
                     value_template=f"{{{{ {key}.landed if '{src.id}' in value_json.sources else 'None' }}}}",
                     json_attributes_topic=topic,
                     json_attributes_template=f"{{{{ (value_json.sources.get('{src.id}') or {{}}) | tojson }}}}",
-                    enabled_by_default=src.enabled, **money)
+                    enabled_by_default=src.enabled, entity_category="diagnostic", **money)
                 add("binary_sensor", f"{gid}_{sid}_in_stock", f"{label} @ {src.seller} in stock", state_topic=topic,
                     value_template=(
                         f"{{% set s = value_json.sources.get('{src.id}') %}}"
                         "{{ 'None' if s is none or s.in_stock is none else ('ON' if s.in_stock else 'OFF') }}"
                     ),
-                    icon="mdi:package-variant-closed-check", enabled_by_default=src.enabled)
+                    icon="mdi:package-variant-closed-check", enabled_by_default=src.enabled, entity_category="diagnostic")
 
         add("event", "alerts", "Alerts", state_topic=self._t(pid, "event"), event_types=EVENT_TYPES, icon="mdi:bell-ring-outline")
 
