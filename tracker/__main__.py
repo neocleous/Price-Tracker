@@ -3,7 +3,7 @@
   price-tracker run        [--product ID] [--all] [--only SRC,...] [--no-publish]
   price-tracker schedule                       # foreground loop, honours product schedules
   price-tracker validate   PRODUCT.yaml [--report out.md] [--json out.json]
-  price-tracker discovery  [--product ID]      # (re)publish HA discovery only
+  price-tracker discovery  [--product ID] [--reset]   # (re)publish HA discovery; --reset re-creates entities
   price-tracker show       [--product ID]      # print latest snapshot as JSON
   price-tracker fetch      URL [--country CC]  # debug: dump offers found on a page
 """
@@ -178,7 +178,7 @@ def cmd_discovery(args, settings: Settings):
     pub = Publisher(settings, store)
     try:
         for p in _products(settings, args.product, None):
-            pub.publish_discovery(p)
+            pub.publish_discovery(p, reset=args.reset)
     finally:
         pub.close()
         store.close()
@@ -231,7 +231,8 @@ def main(argv=None):
     v = sub.add_parser("validate"); v.add_argument("file"); v.add_argument("--report"); v.add_argument("--json")
     v.add_argument("--db"); v.add_argument("--workers", type=int, default=4); v.set_defaults(fn=cmd_validate)
 
-    d = sub.add_parser("discovery"); d.add_argument("--product"); d.set_defaults(fn=cmd_discovery)
+    d = sub.add_parser("discovery"); d.add_argument("--product")
+    d.add_argument("--reset", action="store_true", help="clear and re-create all entities in HA"); d.set_defaults(fn=cmd_discovery)
     sh = sub.add_parser("show"); sh.add_argument("--product"); sh.set_defaults(fn=cmd_show)
 
     fe = sub.add_parser("fetch"); fe.add_argument("url"); fe.add_argument("--country", default="DE")

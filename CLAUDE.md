@@ -23,7 +23,7 @@ cot, Cloud T i-Size, Base T; Lite Cot optional, no 2026 listings found). Any col
 - Out-of-stock offers never count as "lowest" (`alerts.require_in_stock: true`).
 - Observations older than `stale_after_hours` (36) are ignored; price-drop threshold 5 %.
 - HA integration via MQTT discovery only (no HA REST/API from the container). One HA device per
-  product. Entity ids are forced via `object_id` = `<product>_<suffix>` (see `tracker/mqtt.py`).
+  product. Entity ids are forced via `default_entity_id` = `<domain>.<product>_<suffix>` (HA ≥ 2025.10; `object_id` is ignored) (see `tracker/mqtt.py`).
 - Alerts via an MQTT **event** entity + the blueprint in `ha/blueprints/`. Notify services are a
   text list because mobile_app exposes no notify entities.
 - Secrets only in `.env` on the NAS (never in the repo, never seen by Claude).

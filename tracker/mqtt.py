@@ -36,6 +36,7 @@ from .store import Store
 log = logging.getLogger(__name__)
 
 EVENT_TYPES = ["new_low", "price_drop", "back_in_stock", "tracker_error"]
+DISCOVERY_SCHEMA = 2  # bump when entity ids / unique ids change; triggers a clean re-create in HA
 
 
 def _slug(s: str) -> str:
@@ -109,7 +110,10 @@ class Publisher:
         return f"{self.s.discovery_prefix}/{component}/{object_id}/config"
 
     # ------------------------------------------------------------- discovery
-    def publish_discovery(self, product: Product):
+    def publish_discovery(self, product: Product, reset: bool = False):
+        """Publish (retained) discovery configs. With ``reset`` — or when the
+        entity-id scheme changed since the last publish — the previous configs
+        are cleared first so HA re-creates the entities with the new ids."""
         self.connect()
         pid = _slug(product.id)
         cur = product.imports.reporting_currency
@@ -133,7 +137,8 @@ class Publisher:
             base = {
                 "name": name,
                 "unique_id": f"price_tracker_{oid}",
-                "object_id": oid,
+                # HA ≥ 2025.10: entity id comes from default_entity_id (object_id is ignored)
+                "default_entity_id": f"{component}.{oid}",
                 "device": device,
                 "availability": avail,
                 "has_entity_name": True,
@@ -200,9 +205,17 @@ class Publisher:
 
         add("event", "alerts", "Alerts", state_topic=self._t(pid, "event"), event_types=EVENT_TYPES, icon="mdi:bell-ring-outline")
 
-        # remove entities that no longer exist in the config
         prev: list[list[str]] = self.store.get_state(f"{product.id}/mqtt/entities", [])
+        prev_schema = self.store.get_state(f"{product.id}/mqtt/schema", 1)
         current = {(c, o) for c, o in configs}
+        if prev and (reset or prev_schema != DISCOVERY_SCHEMA):
+            # clear everything so HA drops the old entity registry entries, then re-create
+            log.info("resetting %d discovery configs (schema %s → %s)", len(prev), prev_schema, DISCOVERY_SCHEMA)
+            for c, o in prev:
+                self._pub(self._disc(c, o), "", retain=True)
+            time.sleep(3)
+            prev = []
+        # remove entities that no longer exist in the config
         for c, o in prev:
             if (c, o) not in current:
                 self._pub(self._disc(c, o), "", retain=True)
@@ -210,6 +223,7 @@ class Publisher:
         for (c, o), cfg in configs.items():
             self._pub(self._disc(c, o), cfg, retain=True)
         self.store.set_state(f"{product.id}/mqtt/entities", sorted(list(k) for k in current))
+        self.store.set_state(f"{product.id}/mqtt/schema", DISCOVERY_SCHEMA)
         log.info("published discovery for %d entities", len(configs))
 
     @staticmethod
