@@ -13,7 +13,8 @@ services:
     volumes:
       - ./data:/data                  # SQLite history + state
       - ./products:/config/products   # product definitions (edit, then restart)
-    # No ports: the container only talks outbound (HTTPS to shops, MQTT to the broker).
+    ports:
+      - "8099:8099"                   # status page: http://<nas-ip>:8099/  (WEB_PORT=0 disables)
     mem_limit: 512m                   # 1500m when WITH_PLAYWRIGHT=true
     logging:
       driver: json-file

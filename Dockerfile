@@ -18,7 +18,8 @@ FROM base AS playwright-false
 FROM playwright-${WITH_PLAYWRIGHT} AS final
 COPY products /config/products
 VOLUME ["/data", "/config/products"]
-ENV DB_PATH=/data/tracker.sqlite PRODUCTS_DIR=/config/products
+ENV DB_PATH=/data/tracker.sqlite PRODUCTS_DIR=/config/products WEB_PORT=8099
+EXPOSE 8099
 HEALTHCHECK --interval=10m --timeout=10s --start-period=1m \
   CMD python -c "import sqlite3,sys,datetime as d,os; c=sqlite3.connect(os.environ['DB_PATH']); r=c.execute('select max(ts_end) from runs').fetchone()[0]; sys.exit(0 if r and (d.datetime.now(d.timezone.utc)-d.datetime.fromisoformat(r)).total_seconds()<10*3600 else 1)"
 ENTRYPOINT ["python", "-m", "tracker"]

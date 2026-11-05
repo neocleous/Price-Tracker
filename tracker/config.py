@@ -186,6 +186,7 @@ class Product(BaseModel):
     schedule: Schedule = Field(default_factory=Schedule)
     components: list[Component]
     bundles: list[Bundle] = Field(default_factory=list)
+    coverage_notes: list[str] = Field(default_factory=list)  # shown on the status page
 
     @model_validator(mode="after")
     def _check(self) -> "Product":
@@ -239,6 +240,7 @@ class Settings(BaseModel):
     request_timeout: float = 30.0
     per_host_delay: float = 2.0
     log_level: str = "INFO"
+    web_port: int = 8099  # 0 disables the status page
 
     @classmethod
     def from_env(cls) -> "Settings":
@@ -258,6 +260,7 @@ class Settings(BaseModel):
             "REQUEST_TIMEOUT": "request_timeout",
             "PER_HOST_DELAY": "per_host_delay",
             "LOG_LEVEL": "log_level",
+            "WEB_PORT": "web_port",
         }
         for k, attr in mapping.items():
             if k in env and env[k] != "":

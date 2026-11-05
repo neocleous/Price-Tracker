@@ -36,7 +36,8 @@ cot, Cloud T i-Size, Base T; Lite Cot optional, no 2026 listings found). Any col
 - `tracker/landed.py` landed-cost model · `tracker/fx.py` ECB rates (frankfurter) cached daily
 - `tracker/store.py` SQLite · `tracker/compute.py` lows, cheapest set (bundles × components), events
 - `tracker/mqtt.py` HA discovery + state · `tracker/runner.py` one run · `tracker/scheduler.py`
-- `tracker/__main__.py` CLI: `run | schedule | validate | discovery | show | fetch`
+- `tracker/web.py` stdlib status page on WEB_PORT (8099): overview, per-shop tables, landed-cost rules, coverage notes, /api/<id>.json
+- `tracker/__main__.py` CLI: `run | schedule | validate | discovery | show | fetch | web`
 - `products/` product definitions · `ha/` blueprint + dashboard card · `reports/` validation output
 - `.github/workflows/` tests, source validation (runs from GitHub's network), image build
 

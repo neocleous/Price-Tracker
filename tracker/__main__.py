@@ -5,6 +5,7 @@
   price-tracker validate   PRODUCT.yaml [--report out.md] [--json out.json]
   price-tracker discovery  [--product ID] [--reset]   # (re)publish HA discovery; --reset re-creates entities
   price-tracker show       [--product ID]      # print latest snapshot as JSON
+  price-tracker web        [--product ID] [--port N]   # status page only (schedule serves it too)
   price-tracker fetch      URL [--country CC]  # debug: dump offers found on a page
 """
 
@@ -24,6 +25,7 @@ from .mqtt import Publisher
 from .runner import Runner
 from .scheduler import run_forever
 from .store import Store
+from .web import start_web
 
 
 def _setup_logging(level: str):
@@ -66,6 +68,7 @@ def cmd_schedule(args, settings: Settings):
     pub = Publisher(settings, store)
     runner = Runner(settings, store, pub)
     prods = _products(settings, args.product, None)
+    start_web(settings, prods)
     # keep retrying the broker instead of crash-looping the container
     delay = 10
     while True:
@@ -184,6 +187,20 @@ def cmd_discovery(args, settings: Settings):
         store.close()
 
 
+def cmd_web(args, settings: Settings):
+    """Serve the status page only (no fetching, no MQTT) — e.g. against a copied database."""
+    prods = _products(settings, args.product, None)
+    srv = start_web(settings, prods, port=args.port)
+    if srv is None:
+        sys.exit("WEB_PORT is 0")
+    print(f"status page on http://0.0.0.0:{args.port or settings.web_port}/ — Ctrl+C to stop")
+    try:
+        while True:
+            time.sleep(3600)
+    except KeyboardInterrupt:
+        srv.shutdown()
+
+
 def cmd_show(args, settings: Settings):
     store = Store(settings.db_path)
     for p in _products(settings, args.product, None):
@@ -234,6 +251,7 @@ def main(argv=None):
     d = sub.add_parser("discovery"); d.add_argument("--product")
     d.add_argument("--reset", action="store_true", help="clear and re-create all entities in HA"); d.set_defaults(fn=cmd_discovery)
     sh = sub.add_parser("show"); sh.add_argument("--product"); sh.set_defaults(fn=cmd_show)
+    w = sub.add_parser("web"); w.add_argument("--product"); w.add_argument("--port", type=int); w.set_defaults(fn=cmd_web)
 
     fe = sub.add_parser("fetch"); fe.add_argument("url"); fe.add_argument("--country", default="DE")
     fe.add_argument("--playwright", action="store_true"); fe.add_argument("--dump"); fe.set_defaults(fn=cmd_fetch)

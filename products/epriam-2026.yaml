@@ -327,12 +327,11 @@ bundles:
         country: DE
         match: {name_regex: "E-Priam 5 Comfort"}
 
-# Coverage notes (2026-11-05):
-# - Bot-walled from a plain HTTP client (403): galaxus.ch, toppreise.ch, idealo.de,
-#   geizhals.de, tausendkind.ch, amazon.de (503). Need `parser: playwright` from the NAS.
-# - babymarkt.de: 429 from datacenter IPs; untested from the NAS. Product URLs still needed.
-# - babyone.de, kidsroom.de, windeln.de, babyartikel.de, babyprofi.de, babyjoe.ch,
-#   baby-rose.ch, orchestra.ch, manor.ch: search pages are JS-rendered and no 2026
-#   e-Priam product URLs were found via web search — add direct product URLs when known.
-# - Cybex sells the 2026 seat pack and Fold Lux carry cot only inside the set configurator
-#   (no standalone product pages in CH/DE).
+# Shown on the status page.
+coverage_notes:
+  - "Shops tracked (2026-11-05): Cybex CH/DE, baby-walz CH/DE, MY SNOWFLAKE CH, Kindermaxx DE, mypram DE, Bambinou FR."
+  - "Bot-walled for a plain HTTP client (403/503): galaxus.ch, toppreise.ch, idealo.de, geizhals.de, tausendkind.ch, amazon.de — need the Playwright build (WITH_PLAYWRIGHT=true) and a residential IP."
+  - "babymarkt.de and baby-walz.de return 429 from datacenter IPs; baby-walz.de works from the NAS, babymarkt.de still needs product URLs."
+  - "babyone.de, kidsroom.de, windeln.de, babyartikel.de, babyprofi.de, babyjoe.ch, baby-rose.ch, orchestra.ch, manor.ch: JS-only search and no 2026 e-Priam product URLs found — add direct product URLs when known."
+  - "Cybex sells the 2026 Seat Pack and Fold Lux Carry Cot only inside the set configurator (no standalone pages in CH/DE)."
+  - "Priam Lite Cot: no 2026 / New Generation listings found anywhere — tracked as optional with no sources."

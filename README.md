@@ -29,6 +29,14 @@ One device per product (e.g. *Cybex e-Priam 2026*) with:
 
 `ha/dashboard-card.yaml` is a ready-made card; `ha/blueprints/price_tracker_alerts.yaml` the alert automation.
 
+## Status page
+
+The container serves a read-only overview on port **8099** (`http://<nas-ip>:8099/`): cheapest complete set with
+links, the Swiss-only alternative, every component and bundle with each shop's sticker and landed price, VAT
+assumption, stock, 30-day sparkline, last fetch and last error, the landed-cost rules, and coverage notes.
+`/api/<product>.json` returns the same as JSON; `/healthz` is 200 while the last run is under 10 h old.
+Set `WEB_PORT=0` to disable. `price-tracker web --port 8099` serves it standalone (e.g. against a copied database).
+
 ## Install (HexOS / TrueNAS SCALE, Docker Compose)
 
 1. **Mosquitto user** — in the Mosquitto app configuration add a login, e.g.
@@ -113,11 +121,12 @@ price-tracker schedule   [--product ID] [--no-run-now]
 price-tracker validate   products/x.yaml [--report out.md] [--json out.json]
 price-tracker discovery  [--product ID]       # republish HA discovery
 price-tracker show       [--product ID]       # latest snapshot as JSON
+price-tracker web        [--product ID] [--port N]   # status page only
 price-tracker fetch      URL [--country DE] [--playwright]   # debug a page
 ```
 
 Environment: `MQTT_HOST MQTT_PORT MQTT_USER MQTT_PASSWORD MQTT_TLS DISCOVERY_PREFIX TOPIC_PREFIX
-DB_PATH PRODUCTS_DIR LOG_LEVEL PER_HOST_DELAY REQUEST_TIMEOUT USER_AGENT`.
+DB_PATH PRODUCTS_DIR LOG_LEVEL PER_HOST_DELAY REQUEST_TIMEOUT USER_AGENT WEB_PORT`.
 
 ## Development
 

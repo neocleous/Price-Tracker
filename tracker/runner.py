@@ -7,7 +7,7 @@ import datetime as dt
 import logging
 from concurrent.futures import ThreadPoolExecutor
 
-from .compute import Snapshot, build_snapshot
+from .compute import Snapshot, build_snapshot, health_for
 from .config import Product, Settings, Source
 from .fetch import Fetcher, FetchError
 from .fx import FX
@@ -102,25 +102,7 @@ class Runner:
         self.store.end_run(run_id, len(due), ok)
         fx_rates = {c: fx.rate(c) for c in _currencies(product)}
         snap = build_snapshot(product, self.store, fx_rates, {}, new_ids)
-        # health = sources with a fresh, successful observation (not just this run's due set)
-        fresh_ok = {
-            (gid, sid)
-            for gid, view in {**snap.components, **snap.bundles}.items()
-            for sid, s in view["sources"].items()
-            if s.get("fresh")
-        }
-        enabled = {(gid, src.id) for gid, _b, _g, src in product.all_sources()}
-        stale = sorted(f"{g}/{s}" for g, s in enabled - fresh_ok)
-        snap.health = {
-            "sources_total": len(enabled),
-            "sources_ok": len(enabled & fresh_ok),
-            "fetched_this_run": len(due),
-            "failed_this_run": errors,
-            "without_fresh_price": stale,
-            "problem": bool(enabled) and not (enabled & fresh_ok),
-            "run_id": run_id,
-            "stale_after_hours": product.alerts.stale_after_hours,
-        }
+        snap.health = health_for(product, snap, fetched_this_run=len(due), failed_this_run=errors, run_id=run_id)
         if publish and self.publisher is not None:
             self.publisher.publish_snapshot(product, snap)
         return snap

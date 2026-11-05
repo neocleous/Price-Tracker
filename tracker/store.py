@@ -134,6 +134,11 @@ class Store:
         self.db.commit()
         return int(cur.lastrowid)
 
+    def last_run(self, product_id: str) -> sqlite3.Row | None:
+        return self.db.execute(
+            "SELECT * FROM runs WHERE product_id=? AND ts_end IS NOT NULL ORDER BY id DESC LIMIT 1", (product_id,)
+        ).fetchone()
+
     def end_run(self, run_id: int, total: int, ok: int):
         self.db.execute(
             "UPDATE runs SET ts_end=?, sources_total=?, sources_ok=? WHERE id=?", (utcnow(), total, ok, run_id)

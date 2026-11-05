@@ -141,6 +141,28 @@ def build_snapshot(product: Product, store: Store, fx_rates: dict[str, float], r
     return snap
 
 
+def health_for(product: Product, snap: Snapshot, fetched_this_run: int = 0,
+               failed_this_run: dict | None = None, run_id: int | None = None) -> dict:
+    """Source health = enabled sources that have a fresh, successful observation."""
+    fresh_ok = {
+        (gid, sid)
+        for gid, view in {**snap.components, **snap.bundles}.items()
+        for sid, s in view["sources"].items()
+        if s.get("fresh")
+    }
+    enabled = {(gid, src.id) for gid, _b, _g, src in product.all_sources()}
+    return {
+        "sources_total": len(enabled),
+        "sources_ok": len(enabled & fresh_ok),
+        "fetched_this_run": fetched_this_run,
+        "failed_this_run": failed_this_run or {},
+        "without_fresh_price": sorted(f"{g}/{s}" for g, s in enabled - fresh_ok),
+        "problem": bool(enabled) and not (enabled & fresh_ok),
+        "run_id": run_id,
+        "stale_after_hours": product.alerts.stale_after_hours,
+    }
+
+
 def _cheapest_set(product: Product, comp_best: dict[str, Best | None], bundle_best: dict[str, Best | None], label: str) -> dict:
     """Cheapest way to obtain every required component: individual lows, or a
     bundle plus individual lows for whatever it does not cover. Bundles may be
