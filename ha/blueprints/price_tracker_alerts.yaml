@@ -95,7 +95,10 @@ triggers:
   - trigger: state
     entity_id: !input alert_event
     id: alert
-    # guard the NEW state, not the old one: the first event ever comes *from* unknown
+    # first event ever comes *from* unknown (so unknown is NOT excluded in not_from);
+    # a tracker restart goes unavailable -> last event and must not re-alert.
+    not_from:
+      - unavailable
     not_to:
       - unavailable
       - unknown
