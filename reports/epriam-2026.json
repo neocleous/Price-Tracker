@@ -1,13 +1,30 @@
 {
-  "ts": "2026-11-04T22:14:42+00:00",
+  "ts": "2026-11-05T13:14:55+00:00",
   "product": "epriam-2026",
-  "ok": 32,
-  "total": 37,
+  "ok": 42,
+  "total": 47,
   "sources": [
     {
       "group": "frame",
       "source": "cybex_ch",
       "seller": "Cybex CH",
+      "country": "CH",
+      "parser": "jsonld",
+      "enabled": true,
+      "ok": true,
+      "sticker": 1229.0,
+      "currency": "CHF",
+      "landed": 1229.0,
+      "in_stock": 1,
+      "method": "jsonld",
+      "title": "e-Priam Frame - Style Collection - Chrome",
+      "error": "",
+      "url": "https://www.cybex-online.com/de/ch/p/10108491.html"
+    },
+    {
+      "group": "frame",
+      "source": "cybex_ch_rosegold",
+      "seller": "Cybex CH (Rosegold)",
       "country": "CH",
       "parser": "jsonld",
       "enabled": true,
@@ -25,6 +42,23 @@
       "group": "frame",
       "source": "cybex_de",
       "seller": "Cybex DE",
+      "country": "DE",
+      "parser": "jsonld",
+      "enabled": true,
+      "ok": true,
+      "sticker": 1199.95,
+      "currency": "EUR",
+      "landed": 1191.82,
+      "in_stock": 1,
+      "method": "jsonld",
+      "title": "e-Priam Frame - Style Collection - Chrome",
+      "error": "",
+      "url": "https://www.cybex-online.com/de/de/p/10108491.html"
+    },
+    {
+      "group": "frame",
+      "source": "cybex_de_rosegold",
+      "seller": "Cybex DE (Rosegold)",
       "country": "DE",
       "parser": "jsonld",
       "enabled": true,
@@ -100,6 +134,23 @@
       "sticker": 1199.95,
       "currency": "EUR",
       "landed": 1191.82,
+      "in_stock": 1,
+      "method": "jsonld",
+      "title": "Cybex E-Priam 5 Frame incl. Seat Hardpart",
+      "error": "",
+      "url": "https://www.kindermaxx.de/en/brand-a-z/cybex/cybex-strollers/cybex-e-priam-5-frame-incl.-seat-hardpart/526000231"
+    },
+    {
+      "group": "frame",
+      "source": "kindermaxx_ch",
+      "seller": "Kindermaxx → CH (DDP)",
+      "country": "DE",
+      "parser": "jsonld",
+      "enabled": true,
+      "ok": true,
+      "sticker": 1102.51,
+      "currency": "CHF",
+      "landed": 1115.46,
       "in_stock": 1,
       "method": "jsonld",
       "title": "Cybex E-Priam 5 Frame incl. Seat Hardpart",
@@ -295,6 +346,23 @@
     },
     {
       "group": "car_seat",
+      "source": "kindermaxx_ch",
+      "seller": "Kindermaxx → CH (DDP)",
+      "country": "DE",
+      "parser": "jsonld",
+      "enabled": true,
+      "ok": true,
+      "sticker": 183.74,
+      "currency": "CHF",
+      "landed": 196.69,
+      "in_stock": 1,
+      "method": "jsonld",
+      "title": "Cybex Cloud T i-Size baby car seat",
+      "error": "",
+      "url": "https://www.kindermaxx.de/en/car-seats/baby-car-seat-0-13-kg/cybex-cloud-t-i-size-baby-car-seat"
+    },
+    {
+      "group": "car_seat",
       "source": "mysnowflake_ch",
       "seller": "MY SNOWFLAKE CH",
       "country": "CH",
@@ -406,6 +474,23 @@
       "sticker": 199.0,
       "currency": "EUR",
       "landed": 197.65,
+      "in_stock": 1,
+      "method": "jsonld",
+      "title": "Cybex Base T i-Size Base Station",
+      "error": "",
+      "url": "https://www.kindermaxx.de/en/car-seats/isofix-base/cybex-base-t-i-size-base-station"
+    },
+    {
+      "group": "base_t",
+      "source": "kindermaxx_ch",
+      "seller": "Kindermaxx → CH (DDP)",
+      "country": "DE",
+      "parser": "jsonld",
+      "enabled": true,
+      "ok": true,
+      "sticker": 182.84,
+      "currency": "CHF",
+      "landed": 195.79,
       "in_stock": 1,
       "method": "jsonld",
       "title": "Cybex Base T i-Size Base Station",
@@ -532,6 +617,40 @@
       "url": "https://www.kindermaxx.de/en/pushchair/combi-pram/cybex-e-priam-5-style-kombikinderwagen/526000255-526000297-526000353.16"
     },
     {
+      "group": "style_set",
+      "source": "kindermaxx_ch",
+      "seller": "Kindermaxx → CH (DDP)",
+      "country": "DE",
+      "parser": "jsonld",
+      "enabled": true,
+      "ok": true,
+      "sticker": 1899.0,
+      "currency": "CHF",
+      "landed": 1911.95,
+      "in_stock": 1,
+      "method": "jsonld",
+      "title": "Cybex E-Priam 5 Style Kombikinderwagen",
+      "error": "",
+      "url": "https://www.kindermaxx.de/en/pushchair/combi-pram/cybex-e-priam-5-style-kombikinderwagen/526000255-526000297-526000353.16"
+    },
+    {
+      "group": "style_set",
+      "source": "bambinou_fr",
+      "seller": "Bambinou FR",
+      "country": "FR",
+      "parser": "jsonld",
+      "enabled": true,
+      "ok": true,
+      "sticker": 1821.8,
+      "currency": "EUR",
+      "landed": 1834.28,
+      "in_stock": 1,
+      "method": "jsonld",
+      "title": "Pack Poussette e-Priam Style 2026 avec Nacelle pliable luxe ",
+      "error": "",
+      "url": "https://www.bambinou.com/pack-poussette-e-priam-style-2026-nacelle-pliable-luxe-cybex"
+    },
+    {
       "group": "comfort_set",
       "source": "cybex_ch",
       "seller": "Cybex CH",
@@ -584,6 +703,23 @@
     },
     {
       "group": "comfort_set",
+      "source": "kindermaxx_ch",
+      "seller": "Kindermaxx → CH (DDP)",
+      "country": "DE",
+      "parser": "jsonld",
+      "enabled": true,
+      "ok": true,
+      "sticker": 1749.95,
+      "currency": "CHF",
+      "landed": 1762.9,
+      "in_stock": 1,
+      "method": "jsonld",
+      "title": "Cybex E-Priam 5 Comfort Stroller",
+      "error": "",
+      "url": "https://www.kindermaxx.de/en/pushchair/combi-pram/cybex-e-priam-5-comfort-stroller/526000053"
+    },
+    {
+      "group": "comfort_set",
       "source": "mypram_de",
       "seller": "mypram DE",
       "country": "DE",
@@ -617,6 +753,23 @@
       "url": "https://www.kindermaxx.de/en/pushchair/combi-pram/cybex-e-priam-5-style-stroller-set-3-in-1-incl.-cloud-t-i-size-car-seat/cybex-e-priam-style-set3in1-cloud-t.16"
     },
     {
+      "group": "style_set_cloud_t",
+      "source": "kindermaxx_ch",
+      "seller": "Kindermaxx → CH (DDP)",
+      "country": "DE",
+      "parser": "jsonld",
+      "enabled": true,
+      "ok": true,
+      "sticker": 2139.8,
+      "currency": "CHF",
+      "landed": 2152.75,
+      "in_stock": 1,
+      "method": "jsonld",
+      "title": "Cybex E-Priam 5 Style Stroller Set 3 in 1 incl. Cloud T i-Size Car Seat",
+      "error": "",
+      "url": "https://www.kindermaxx.de/en/pushchair/combi-pram/cybex-e-priam-5-style-stroller-set-3-in-1-incl.-cloud-t-i-size-car-seat/cybex-e-priam-style-set3in1-cloud-t.16"
+    },
+    {
       "group": "comfort_set_cloud_t",
       "source": "kindermaxx_de",
       "seller": "Kindermaxx DE",
@@ -632,11 +785,28 @@
       "title": "Cybex e-Priam 5 Comfort Stroller Set 3 in 1 incl. Cloud T i-Size",
       "error": "",
       "url": "https://www.kindermaxx.de/en/pushchair/combi-pram/cybex-e-priam-5-comfort-stroller-set-3-in-1-incl.-cloud-t-i-size/cybex-e-priam-comfort-set3in1-cloud-t"
+    },
+    {
+      "group": "comfort_set_cloud_t",
+      "source": "kindermaxx_ch",
+      "seller": "Kindermaxx → CH (DDP)",
+      "country": "DE",
+      "parser": "jsonld",
+      "enabled": true,
+      "ok": true,
+      "sticker": 1989.9,
+      "currency": "CHF",
+      "landed": 2002.85,
+      "in_stock": 1,
+      "method": "jsonld",
+      "title": "Cybex e-Priam 5 Comfort Stroller Set 3 in 1 incl. Cloud T i-Size",
+      "error": "",
+      "url": "https://www.kindermaxx.de/en/pushchair/combi-pram/cybex-e-priam-5-comfort-stroller-set-3-in-1-incl.-cloud-t-i-size/cybex-e-priam-comfort-set3in1-cloud-t"
     }
   ],
   "snapshot_total": {
-    "value": 2134.37,
-    "partial_value": 2134.37,
+    "value": 2117.62,
+    "partial_value": 2117.62,
     "complete": true,
     "items": [
       {
@@ -652,37 +822,45 @@
         "in_stock": true,
         "country": "DE",
         "vat_refund": "unknown",
-        "fetched_at": "2026-11-04T22:14:23+00:00"
+        "fetched_at": "2026-11-05T13:14:39+00:00",
+        "shipping": 0.0
       },
       {
         "kind": "component",
         "id": "car_seat",
-        "source": "kindermaxx_de",
-        "seller": "Kindermaxx DE",
+        "source": "kindermaxx_ch",
+        "seller": "Kindermaxx → CH (DDP)",
         "url": "https://www.kindermaxx.de/en/car-seats/baby-car-seat-0-13-kg/cybex-cloud-t-i-size-baby-car-seat",
-        "landed": 198.62,
-        "landed_no_refund": 198.62,
-        "sticker": 199.98,
-        "currency": "EUR",
+        "landed": 196.69,
+        "landed_no_refund": 196.69,
+        "sticker": 183.74,
+        "currency": "CHF",
         "in_stock": true,
         "country": "DE",
         "vat_refund": "unknown",
-        "fetched_at": "2026-11-04T22:14:07+00:00"
+        "fetched_at": "2026-11-05T13:14:23+00:00",
+        "shipping": 12.95
       },
       {
         "kind": "component",
         "id": "base_t",
-        "source": "kindermaxx_de",
-        "seller": "Kindermaxx DE",
+        "source": "kindermaxx_ch",
+        "seller": "Kindermaxx → CH (DDP)",
         "url": "https://www.kindermaxx.de/en/car-seats/isofix-base/cybex-base-t-i-size-base-station",
-        "landed": 197.65,
-        "landed_no_refund": 197.65,
-        "sticker": 199.0,
-        "currency": "EUR",
+        "landed": 195.79,
+        "landed_no_refund": 195.79,
+        "sticker": 182.84,
+        "currency": "CHF",
         "in_stock": true,
         "country": "DE",
         "vat_refund": "unknown",
-        "fetched_at": "2026-11-04T22:14:13+00:00"
+        "fetched_at": "2026-11-05T13:14:30+00:00",
+        "shipping": 12.95
+      },
+      {
+        "kind": "adjustment",
+        "id": "shipping_once_per_order",
+        "landed": -12.95
       }
     ],
     "home": {
@@ -703,7 +881,8 @@
           "in_stock": true,
           "country": "CH",
           "vat_refund": "unknown",
-          "fetched_at": "2026-11-04T22:13:33+00:00"
+          "fetched_at": "2026-11-05T13:13:44+00:00",
+          "shipping": 0.0
         },
         {
           "kind": "component",
@@ -718,7 +897,8 @@
           "in_stock": true,
           "country": "CH",
           "vat_refund": "unknown",
-          "fetched_at": "2026-11-04T22:13:35+00:00"
+          "fetched_at": "2026-11-05T13:13:47+00:00",
+          "shipping": 0.0
         },
         {
           "kind": "component",
@@ -733,7 +913,8 @@
           "in_stock": true,
           "country": "CH",
           "vat_refund": "unknown",
-          "fetched_at": "2026-11-04T22:13:37+00:00"
+          "fetched_at": "2026-11-05T13:13:49+00:00",
+          "shipping": 0.0
         },
         {
           "kind": "component",
@@ -748,7 +929,8 @@
           "in_stock": true,
           "country": "CH",
           "vat_refund": "unknown",
-          "fetched_at": "2026-11-04T22:13:44+00:00"
+          "fetched_at": "2026-11-05T13:13:59+00:00",
+          "shipping": 0.0
         },
         {
           "kind": "component",
@@ -763,7 +945,8 @@
           "in_stock": true,
           "country": "CH",
           "vat_refund": "unknown",
-          "fetched_at": "2026-11-04T22:14:11+00:00"
+          "fetched_at": "2026-11-05T13:14:25+00:00",
+          "shipping": 0.0
         }
       ]
     }
