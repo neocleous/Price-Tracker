@@ -1,5 +1,7 @@
 import datetime as dt
 
+import pytest
+
 from tracker.compute import build_snapshot
 from tracker.config import Product
 from tracker.store import Store
@@ -100,3 +102,21 @@ def test_back_in_stock_event():
     i = obs(s, "frame", "ch1", 1000, in_stock=1)
     snap = build_snapshot(p, s, {}, {}, {i})
     assert any(e["event_type"] == "back_in_stock" for e in snap.events)
+
+
+def test_shipping_counted_once_per_seller():
+    cfg = {**PRODUCT, "imports": {**PRODUCT["imports"], "routes": {"ddp": {"mode": "ddp", "default_shipping": 12.95}}}}
+    cfg["components"] = [
+        {"id": "frame", "name": "Frame", "bounds": {"min": 100, "max": 5000}, "sources": [
+            {"id": "shop", "seller": "Shop", "url": "u1", "country": "DE", "route": "ddp", "currency": "CHF"}]},
+        {"id": "seat", "name": "Seat", "bounds": {"min": 50, "max": 2000}, "sources": [
+            {"id": "shop", "seller": "Shop", "url": "u2", "country": "DE", "route": "ddp", "currency": "CHF"}]},
+    ]
+    cfg["bundles"] = []
+    p = Product.model_validate(cfg)
+    s = Store(":memory:")
+    obs(s, "frame", "shop", 1012.95, shipping=12.95)
+    obs(s, "seat", "shop", 212.95, shipping=12.95)
+    snap = build_snapshot(p, s, {}, {})
+    assert snap.total["value"] == pytest.approx(1212.95)  # 1000 + 200 + one shipping
+    assert any(i["kind"] == "adjustment" for i in snap.total["items"])

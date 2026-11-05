@@ -32,32 +32,45 @@ class FetchError(Exception):
 
 
 class Fetcher:
-    """One instance per run; shares an httpx client and per-host last-hit times."""
+    """One instance per run. One httpx client (cookie jar) per *session* name so
+    that e.g. a shop's CHF storefront and its EUR storefront can both be read in
+    the same run; per-host pacing is shared across sessions."""
 
     def __init__(self, settings: Settings):
         self.settings = settings
-        self._client = httpx.Client(
-            follow_redirects=True,
-            timeout=settings.request_timeout,
-            http2=False,
-            headers={
-                "User-Agent": settings.user_agent,
-                "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
-                "Accept-Encoding": "gzip, deflate, br",
-                "Upgrade-Insecure-Requests": "1",
-                "Sec-Fetch-Dest": "document",
-                "Sec-Fetch-Mode": "navigate",
-                "Sec-Fetch-Site": "none",
-                "Sec-Fetch-User": "?1",
-                "Cache-Control": "no-cache",
-            },
-        )
+        self._clients: dict[str, httpx.Client] = {}
         self._last_hit: dict[str, float] = {}
         self._lock = threading.Lock()
+        self._prelude_done: dict[str, threading.Event] = {}
+        self._prelude_error: dict[str, str] = {}
         self._pw = None
 
+    def _client_for(self, session: str) -> httpx.Client:
+        with self._lock:
+            c = self._clients.get(session)
+            if c is None:
+                c = httpx.Client(
+                    follow_redirects=True,
+                    timeout=self.settings.request_timeout,
+                    http2=False,
+                    headers={
+                        "User-Agent": self.settings.user_agent,
+                        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+                        "Accept-Encoding": "gzip, deflate, br",
+                        "Upgrade-Insecure-Requests": "1",
+                        "Sec-Fetch-Dest": "document",
+                        "Sec-Fetch-Mode": "navigate",
+                        "Sec-Fetch-Site": "none",
+                        "Sec-Fetch-User": "?1",
+                        "Cache-Control": "no-cache",
+                    },
+                )
+                self._clients[session] = c
+            return c
+
     def close(self):
-        self._client.close()
+        for c in self._clients.values():
+            c.close()
         if self._pw is not None:
             try:
                 self._pw_browser.close()
@@ -75,17 +88,55 @@ class Fetcher:
                 time.sleep(wait + random.uniform(0, 0.5))
             self._last_hit[host] = time.monotonic()
 
+    # ------------------------------------------------------------------ prelude
+    def _run_prelude(self, source: Source, headers: dict[str, str]):
+        """Session set-up (e.g. currency switch) once per run per distinct prelude."""
+        p = source.prelude
+        if p is None:
+            return
+        key = f"{source.session} {p.method} {p.url} {sorted(p.data.items())}"
+        with self._lock:
+            ev = self._prelude_done.get(key)
+            first = ev is None
+            if first:
+                ev = self._prelude_done[key] = threading.Event()
+        if not first:
+            ev.wait(timeout=self.settings.request_timeout + 5)  # another worker is running it
+            if not ev.is_set() or self._prelude_error.get(key):
+                raise FetchError(f"prelude unavailable: {self._prelude_error.get(key, 'timed out')}")
+            return
+        try:
+            self._pace(p.url)
+            h = {**headers, **p.headers}
+            client = self._client_for(source.session)
+            try:
+                if p.method == "POST":
+                    r = client.post(p.url, data=p.data, headers=h)
+                else:
+                    r = client.get(p.url, params=p.data or None, headers=h)
+            except httpx.HTTPError as e:
+                raise FetchError(f"prelude failed: {type(e).__name__}: {e}") from e
+            log.debug("prelude %s %s -> %s", p.method, p.url, r.status_code)
+            if r.status_code >= 400:
+                raise FetchError(f"prelude {p.method} {p.url} -> HTTP {r.status_code}", r.status_code)
+        except FetchError as e:
+            self._prelude_error[key] = str(e)
+            raise
+        finally:
+            ev.set()
+
     # ------------------------------------------------------------------ http
     def get(self, source: Source) -> str:
         if source.parser == "playwright":
             return self._get_playwright(source)
         headers = {"Accept-Language": _ACCEPT_LANG.get(source.country, "en;q=0.9")}
         headers.update(source.headers)
+        self._run_prelude(source, headers)
         last_exc: Exception | None = None
         for attempt in range(3):
             self._pace(source.url)
             try:
-                r = self._client.get(source.url, headers=headers)
+                r = self._client_for(source.session).get(source.url, headers=headers, cookies=source.cookies or None)
             except httpx.HTTPError as e:
                 last_exc = FetchError(f"{type(e).__name__}: {e}")
                 time.sleep(2 * (attempt + 1))

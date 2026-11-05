@@ -28,7 +28,8 @@ CREATE TABLE IF NOT EXISTS observations (
     fx_rate REAL,
     method TEXT,
     title TEXT,
-    sku TEXT
+    sku TEXT,
+    shipping REAL
 );
 CREATE INDEX IF NOT EXISTS obs_lookup ON observations(product_id, group_id, source_id, ts);
 CREATE TABLE IF NOT EXISTS runs (
@@ -67,6 +68,13 @@ class Store:
         self.db.row_factory = sqlite3.Row
         self.db.executescript(SCHEMA)
         self.db.execute("PRAGMA journal_mode=WAL")
+        self._migrate()
+
+    def _migrate(self):
+        cols = {r["name"] for r in self.db.execute("PRAGMA table_info(observations)")}
+        if "shipping" not in cols:
+            self.db.execute("ALTER TABLE observations ADD COLUMN shipping REAL")
+            self.db.commit()
 
     def close(self):
         self.db.close()

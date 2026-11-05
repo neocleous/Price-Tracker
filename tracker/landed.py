@@ -42,12 +42,13 @@ class Landed:
 
 def compute_landed(sticker: float, currency: str, source: Source, rules: ImportRules, fx_rate: float) -> Landed:
     """``fx_rate`` = reporting-currency units per 1 unit of ``currency``."""
-    route = rules.route_for(source.country)
+    route = rules.route_for(source.country, source.route)
     shipping_local = source.shipping if source.shipping is not None else route.default_shipping
 
-    if route.mode == "domestic":
+    if route.mode in ("domestic", "ddp"):
+        # price already carries the buyer's VAT (domestic) or VAT + clearance (ddp)
         total = (sticker + shipping_local) * fx_rate
-        return Landed(total, total, shipping_local * fx_rate, 0.0, False, "domestic", fx_rate)
+        return Landed(total, total, shipping_local * fx_rate, 0.0, False, route.mode, fx_rate)
 
     def _case(refund: bool) -> tuple[float, float]:
         net = sticker / (1 + route.local_vat) if refund and route.local_vat else sticker

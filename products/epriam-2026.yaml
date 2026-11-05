@@ -30,6 +30,10 @@ imports:
       default_shipping: 0.0  # most DE shops ship free above ~EUR 50–100
       refund_possible: true  # only applied for sources marked vat_refund: yes
       delivery_note: "🇩🇪 DELIVER TO THE GERMAN PARCEL BOX — collect and declare at the border (QuickZoll, 8.1 % VAT); ask the shop for an Ausfuhrschein"
+    kindermaxx_ddp:          # Kindermaxx's Swiss storefront: CHF prices incl. Swiss VAT, customs cleared, via MeinEinkauf.ch
+      mode: ddp
+      default_shipping: 12.95   # CHF per order (counted per item here — conservative)
+      delivery_note: "🇨🇭 Order in CHF on kindermaxx.de with a Swiss delivery address — price includes Swiss VAT and customs, delivered home via MeinEinkauf.ch (+ CHF 12.95 per order)"
   default_route:             # any other EU seller: shipped to the DE box, EU VAT not refundable
     mode: collect
     local_vat: 0.20
@@ -97,6 +101,15 @@ components:
         seller: Kindermaxx DE
         url: https://www.kindermaxx.de/en/brand-a-z/cybex/cybex-strollers/cybex-e-priam-5-frame-incl.-seat-hardpart/526000231
         country: DE
+        match: {name_regex: "E-Priam 5 Frame"}
+      - id: kindermaxx_ch
+        seller: Kindermaxx → CH (DDP)
+        url: https://www.kindermaxx.de/en/brand-a-z/cybex/cybex-strollers/cybex-e-priam-5-frame-incl.-seat-hardpart/526000231
+        country: DE
+        route: kindermaxx_ddp
+        session: kindermaxx_ch
+        currency: CHF
+        prelude: {method: POST, url: "https://www.kindermaxx.de/en/checkout/configure", data: {currencyId: "0198c1a9253670379cc4ff5790830bb6"}}
         match: {name_regex: "E-Priam 5 Frame"}
 
   - id: seat_pack
@@ -179,6 +192,15 @@ components:
         url: https://www.kindermaxx.de/en/car-seats/baby-car-seat-0-13-kg/cybex-cloud-t-i-size-baby-car-seat
         country: DE
         match: {name_regex: "Cloud T"}
+      - id: kindermaxx_ch
+        seller: Kindermaxx → CH (DDP)
+        url: https://www.kindermaxx.de/en/car-seats/baby-car-seat-0-13-kg/cybex-cloud-t-i-size-baby-car-seat
+        country: DE
+        route: kindermaxx_ddp
+        session: kindermaxx_ch
+        currency: CHF
+        prelude: {method: POST, url: "https://www.kindermaxx.de/en/checkout/configure", data: {currencyId: "0198c1a9253670379cc4ff5790830bb6"}}
+        match: {name_regex: "Cloud T"}
       - id: mysnowflake_ch
         seller: MY SNOWFLAKE CH
         url: https://mysnowflake.ch/en/collections/cybex/products/cybex-cloud-t-i-size-plus-babyschale-sepia-black
@@ -222,6 +244,15 @@ components:
         seller: Kindermaxx DE
         url: https://www.kindermaxx.de/en/car-seats/isofix-base/cybex-base-t-i-size-base-station
         country: DE
+        match: {name_regex: "Base T"}
+      - id: kindermaxx_ch
+        seller: Kindermaxx → CH (DDP)
+        url: https://www.kindermaxx.de/en/car-seats/isofix-base/cybex-base-t-i-size-base-station
+        country: DE
+        route: kindermaxx_ddp
+        session: kindermaxx_ch
+        currency: CHF
+        prelude: {method: POST, url: "https://www.kindermaxx.de/en/checkout/configure", data: {currencyId: "0198c1a9253670379cc4ff5790830bb6"}}
         match: {name_regex: "Base T"}
       - id: mysnowflake_ch
         seller: MY SNOWFLAKE CH
@@ -274,6 +305,15 @@ bundles:
         url: https://www.kindermaxx.de/en/pushchair/combi-pram/cybex-e-priam-5-style-kombikinderwagen/526000255-526000297-526000353.16
         country: DE
         match: {name_regex: "E-Priam 5 Style"}
+      - id: kindermaxx_ch
+        seller: Kindermaxx → CH (DDP)
+        url: https://www.kindermaxx.de/en/pushchair/combi-pram/cybex-e-priam-5-style-kombikinderwagen/526000255-526000297-526000353.16
+        country: DE
+        route: kindermaxx_ddp
+        session: kindermaxx_ch
+        currency: CHF
+        prelude: {method: POST, url: "https://www.kindermaxx.de/en/checkout/configure", data: {currencyId: "0198c1a9253670379cc4ff5790830bb6"}}
+        match: {name_regex: "E-Priam 5 Style"}
       - id: bambinou_fr
         seller: Bambinou FR
         url: https://www.bambinou.com/pack-poussette-e-priam-style-2026-nacelle-pliable-luxe-cybex
@@ -300,6 +340,15 @@ bundles:
         url: https://www.kindermaxx.de/en/pushchair/combi-pram/cybex-e-priam-5-comfort-stroller/526000053
         country: DE
         match: {name_regex: "E-Priam 5 Comfort"}
+      - id: kindermaxx_ch
+        seller: Kindermaxx → CH (DDP)
+        url: https://www.kindermaxx.de/en/pushchair/combi-pram/cybex-e-priam-5-comfort-stroller/526000053
+        country: DE
+        route: kindermaxx_ddp
+        session: kindermaxx_ch
+        currency: CHF
+        prelude: {method: POST, url: "https://www.kindermaxx.de/en/checkout/configure", data: {currencyId: "0198c1a9253670379cc4ff5790830bb6"}}
+        match: {name_regex: "E-Priam 5 Comfort"}
       - id: mypram_de
         seller: mypram DE
         url: https://www.mypram.com/de/cybex-e-priam-comfort-kombikinderwagen-rosegold-sepia-black.html
@@ -315,6 +364,15 @@ bundles:
         url: https://www.kindermaxx.de/en/pushchair/combi-pram/cybex-e-priam-5-style-stroller-set-3-in-1-incl.-cloud-t-i-size-car-seat/cybex-e-priam-style-set3in1-cloud-t.16
         country: DE
         match: {name_regex: "E-Priam 5 Style"}
+      - id: kindermaxx_ch
+        seller: Kindermaxx → CH (DDP)
+        url: https://www.kindermaxx.de/en/pushchair/combi-pram/cybex-e-priam-5-style-stroller-set-3-in-1-incl.-cloud-t-i-size-car-seat/cybex-e-priam-style-set3in1-cloud-t.16
+        country: DE
+        route: kindermaxx_ddp
+        session: kindermaxx_ch
+        currency: CHF
+        prelude: {method: POST, url: "https://www.kindermaxx.de/en/checkout/configure", data: {currencyId: "0198c1a9253670379cc4ff5790830bb6"}}
+        match: {name_regex: "E-Priam 5 Style"}
 
   - id: comfort_set_cloud_t
     name: e-Priam Comfort 3-in-1 — frame + seat + carry cot + Cloud T
@@ -326,10 +384,20 @@ bundles:
         url: https://www.kindermaxx.de/en/pushchair/combi-pram/cybex-e-priam-5-comfort-stroller-set-3-in-1-incl.-cloud-t-i-size/cybex-e-priam-comfort-set3in1-cloud-t
         country: DE
         match: {name_regex: "E-Priam 5 Comfort"}
+      - id: kindermaxx_ch
+        seller: Kindermaxx → CH (DDP)
+        url: https://www.kindermaxx.de/en/pushchair/combi-pram/cybex-e-priam-5-comfort-stroller-set-3-in-1-incl.-cloud-t-i-size/cybex-e-priam-comfort-set3in1-cloud-t
+        country: DE
+        route: kindermaxx_ddp
+        session: kindermaxx_ch
+        currency: CHF
+        prelude: {method: POST, url: "https://www.kindermaxx.de/en/checkout/configure", data: {currencyId: "0198c1a9253670379cc4ff5790830bb6"}}
+        match: {name_regex: "E-Priam 5 Comfort"}
 
 # Shown on the status page.
 coverage_notes:
-  - "Shops tracked (2026-11-05): Cybex CH/DE, baby-walz CH/DE, MY SNOWFLAKE CH, Kindermaxx DE, mypram DE, Bambinou FR."
+  - "Shops tracked (2026-11-05): Cybex CH/DE, baby-walz CH/DE, MY SNOWFLAKE CH, Kindermaxx DE (EUR to the parcel box, and its CHF Swiss storefront delivered home DDP via MeinEinkauf.ch), mypram DE, Bambinou FR."
+  - "Kindermaxx → CH (DDP): select 'Fr Swiss francs' on kindermaxx.de; prices then include Swiss VAT and customs clearance; CHF 12.95 shipping per order (the tracker counts it per item, so a multi-item order is up to CHF 26 cheaper than shown)."
   - "Bot-walled for a plain HTTP client (403/503): galaxus.ch, toppreise.ch, idealo.de, geizhals.de, tausendkind.ch, amazon.de — need the Playwright build (WITH_PLAYWRIGHT=true) and a residential IP."
   - "babymarkt.de and baby-walz.de return 429 from datacenter IPs; baby-walz.de works from the NAS, babymarkt.de still needs product URLs."
   - "babyone.de, kidsroom.de, windeln.de, babyartikel.de, babyprofi.de, babyjoe.ch, baby-rose.ch, orchestra.ch, manor.ch: JS-only search and no 2026 e-Priam product URLs found — add direct product URLs when known."

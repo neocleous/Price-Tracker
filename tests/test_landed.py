@@ -53,3 +53,15 @@ def test_default_route_refund_not_possible():
     l = compute_landed(1200.0, "EUR", src("FR", "yes"), RULES, 0.94)
     assert l.refund_applied is False
     assert l.landed == pytest.approx((1200 + 40) * 0.94 * 1.081 + 25.0, abs=0.01)
+
+
+def test_ddp_route_is_sticker_plus_shipping():
+    rules = ImportRules(
+        home_country="CH", reporting_currency="CHF", import_vat=0.081,
+        routes={"shop_ddp": Route(mode="ddp", default_shipping=12.95)},
+        default_route=Route(mode="collect", local_vat=0.2, refund_possible=False),
+    )
+    s = Source(id="s", seller="s", url="https://x", country="DE", route="shop_ddp", currency="CHF")
+    l = compute_landed(1749.95, "CHF", s, rules, 1.0)
+    assert l.landed == pytest.approx(1762.90) and l.import_tax == 0 and l.route_mode == "ddp"
+    assert l.shipping == pytest.approx(12.95)

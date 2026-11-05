@@ -41,13 +41,27 @@ class Match(BaseModel):
         return True
 
 
+class Prelude(BaseModel):
+    """A request made once per host per run before fetching, on the same HTTP
+    session — e.g. a shop's currency/country switch that lives in a cookie."""
+
+    url: str
+    method: Literal["GET", "POST"] = "POST"
+    data: dict[str, str] = Field(default_factory=dict)
+    headers: dict[str, str] = Field(default_factory=dict)
+
+
 class Source(BaseModel):
     id: str
     seller: str
     url: str
     country: str = Field(min_length=2, max_length=2)
+    route: str | None = None  # key into imports.routes; default = the country's route
     currency: str | None = None  # override when the page omits it
     parser: Parser = "jsonld"
+    prelude: Prelude | None = None
+    cookies: dict[str, str] = Field(default_factory=dict)
+    session: str = "default"  # sources sharing a name share one cookie jar (and one prelude) per run
     selector: str | None = None  # css
     pattern: str | None = None  # regex, first group = price
     stock_selector: str | None = None
@@ -117,13 +131,18 @@ class Route(BaseModel):
     local VAT, carrier charges import VAT plus a clearance fee.
 
     ``domestic``: home-country seller, sticker is landed.
+
+    ``ddp``: delivered duty paid — the shop's price already includes the
+    buyer's VAT and customs clearance (e.g. a foreign shop's Swiss storefront);
+    landed = sticker + shipping, no tax arithmetic.
     """
 
-    mode: Literal["domestic", "collect", "ship"]
+    mode: Literal["domestic", "collect", "ship", "ddp"]
     local_vat: float = 0.0
     default_shipping: float = 0.0  # in the seller's currency
     clearance_fee: float = 0.0  # in the reporting currency
     refund_possible: bool = True
+    shipping_per_order: bool = True  # count shipping once per seller in a multi-item plan
     delivery_note: str | None = None  # shown in alerts, e.g. "Deliver to the German parcel box"
 
 
@@ -137,17 +156,22 @@ class ImportRules(BaseModel):
 
     home_delivery_note: str | None = None  # shown in alerts for home-country sellers
 
-    def route_for(self, country: str) -> Route:
+    def route_for(self, country: str, route_key: str | None = None) -> Route:
+        if route_key:
+            if route_key not in self.routes:
+                raise KeyError(f"unknown route {route_key!r}; define it under imports.routes")
+            return self.routes[route_key]
         if country == self.home_country:
             return Route(mode="domestic", delivery_note=self.home_delivery_note)
         return self.routes.get(country, self.default_route)
 
-    def delivery_note(self, country: str) -> str:
-        r = self.route_for(country)
+    def delivery_note(self, country: str, route_key: str | None = None) -> str:
+        r = self.route_for(country, route_key)
         if r.delivery_note:
             return r.delivery_note
         return {"domestic": f"Delivery within {self.home_country}", "collect": f"Collect in {country}",
-                "ship": f"Ships from {country} to {self.home_country}"}[r.mode]
+                "ship": f"Ships from {country} to {self.home_country}",
+                "ddp": f"Delivered to {self.home_country}, duties and VAT paid"}[r.mode]
 
 
 class Alerts(BaseModel):
@@ -204,6 +228,8 @@ class Product(BaseModel):
                 if key in seen:
                     raise ValueError(f"duplicate source id {key}")
                 seen.add(key)
+                if s.route and s.route not in self.imports.routes:
+                    raise ValueError(f"source {key}: unknown route {s.route!r}")
         return self
 
     def component(self, cid: str) -> Component:

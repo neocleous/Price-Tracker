@@ -29,6 +29,7 @@ class Best:
     country: str
     vat_refund: str
     fetched_at: str
+    shipping: float = 0.0  # reporting currency, as included in `landed`
 
     def as_dict(self) -> dict:
         return {
@@ -43,6 +44,7 @@ class Best:
             "country": self.country,
             "vat_refund": self.vat_refund,
             "fetched_at": self.fetched_at,
+            "shipping": round(self.shipping, 2),
         }
 
 
@@ -76,6 +78,7 @@ def _row_to_best(row, product: Product, group_id: str, country_lookup: dict) -> 
         country=src.country,
         vat_refund=src.vat_refund,
         fetched_at=row["ts"],
+        shipping=float(row["shipping"] or 0.0) if "shipping" in row.keys() else 0.0,
     )
 
 
@@ -170,6 +173,7 @@ def _cheapest_set(product: Product, comp_best: dict[str, Best | None], bundle_be
     required = [c.id for c in product.components if c.required]
     if not required:
         return {"value": None, "complete": False, "items": []}
+    src_lookup = {(g.id, s.id): s for g in (*product.components, *product.bundles) for s in g.sources}
 
     def _plan(bundle_ids: tuple[str, ...]) -> tuple[float, list[dict], bool] | None:
         covered: set[str] = set()
@@ -196,6 +200,19 @@ def _cheapest_set(product: Product, comp_best: dict[str, Best | None], bundle_be
                 continue
             total += best.landed
             items.append({"kind": "component", "id": cid, **best.as_dict()})
+        # shipping is per order: count it once per seller/session, not once per item
+        by_seller: dict[tuple, list[float]] = {}
+        for it in items:
+            if it.get("missing"):
+                continue
+            src = src_lookup.get((it["id"], it["source"]))
+            if src is None or not product.imports.route_for(src.country, src.route).shipping_per_order:
+                continue
+            by_seller.setdefault((src.seller, src.session), []).append(it.get("shipping") or 0.0)
+        saved = sum(sum(v) - max(v) for v in by_seller.values() if len(v) > 1)
+        total -= saved
+        if saved:
+            items.append({"kind": "adjustment", "id": "shipping_once_per_order", "landed": round(-saved, 2)})
         return total, items, complete
 
     plans = []
@@ -215,6 +232,7 @@ def _events_and_alltime(product, store: Store, snap: Snapshot, comp_best, bundle
     events: list[dict] = []
     pid = product.id
     alltime: dict[str, Any] = {}
+    routes = {(g.id, s.id): s.route for g in (*product.components, *product.bundles) for s in g.sources}
 
     def _check_low(key: str, label: str, best: Best | None, value: float | None, extra: dict | None = None):
         prev = store.get_state(f"{pid}/alltime/{key}")
@@ -236,7 +254,7 @@ def _events_and_alltime(product, store: Store, snap: Snapshot, comp_best, bundle
                         "previous": round(float(prev["value"]), 2),
                         "currency": product.imports.reporting_currency,
                         **({"seller": best.seller, "url": best.url, "country": best.country,
-                            "delivery": product.imports.delivery_note(best.country)} if best else {}),
+                            "delivery": product.imports.delivery_note(best.country, routes.get((best.group_id, best.source_id)))} if best else {}),
                     }
                 )
         else:
@@ -275,7 +293,7 @@ def _events_and_alltime(product, store: Store, snap: Snapshot, comp_best, bundle
             "value": round(cur_l, 2),
             "currency": product.imports.reporting_currency,
             "country": country,
-            "delivery": product.imports.delivery_note(country) if country else "",
+            "delivery": product.imports.delivery_note(country, routes.get((grp_id, sid))) if country else "",
         }
         if prev_l > 0 and (prev_l - cur_l) / prev_l >= thr:
             events.append(

@@ -53,6 +53,7 @@ class Runner:
                 landed_no_refund=landed.landed_no_refund,
                 in_stock=None if offer.in_stock is None else int(offer.in_stock),
                 fx_rate=rate, method=offer.method, title=(offer.name or page_title(html) or "")[:200], sku=offer.sku,
+                shipping=landed.shipping,
             )
             log.info("%s/%s: %.2f %s → %.0f %s (%s, stock=%s)", group_id, source.id, offer.price, currency,
                      landed.landed, product.imports.reporting_currency, offer.method, offer.in_stock)

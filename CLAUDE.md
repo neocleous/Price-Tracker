@@ -20,6 +20,12 @@ cot, Cloud T i-Size, Base T; Lite Cot optional, no 2026 listings found). Any col
 - Landed-cost model: EU sellers via the German parcel box (route `collect`): sticker, minus local
   VAT only when `vat_refund: yes`, plus shipping, × (1 + 8.1 % CH import VAT), no duty, no clearance
   fee. Ranking uses the conservative figure unless refund is confirmed. Non-DE EU sellers: no refund.
+  Route `ddp` (e.g. Kindermaxx's CHF storefront via MeinEinkauf.ch): price already includes Swiss VAT
+  and customs → landed = sticker + shipping. A source can pin a route with `route: <key>`.
+- Shipping is per order: `_cheapest_set` counts it once per (seller, session) and shows an
+  `adjustment` item. Observations store `shipping` (reporting currency) for that.
+- Sources can carry a `prelude` request (e.g. Shopware currency switch POST) and a `session` name;
+  each session has its own cookie jar per run, so EUR and CHF storefronts of one shop coexist.
 - Out-of-stock offers never count as "lowest" (`alerts.require_in_stock: true`).
 - Observations older than `stale_after_hours` (36) are ignored; price-drop threshold 5 %.
 - HA integration via MQTT discovery only (no HA REST/API from the container). One HA device per

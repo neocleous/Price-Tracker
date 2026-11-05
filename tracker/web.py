@@ -202,6 +202,9 @@ class Renderer:
                 if i.get("missing"):
                     lis.append(f'<li><span>{_esc(i["id"])}</span><span class="m">no fresh offer</span></li>')
                     continue
+                if i.get("kind") == "adjustment":
+                    lis.append(f'<li><span class="m">shipping counted once per order</span><span><b>{_money(i["landed"])}</b></span></li>')
+                    continue
                 kind = "bundle" if i["kind"] == "bundle" else "part"
                 ref = "" if i.get("country") == p.imports.home_country else (
                     ' · VAT refund assumed' if i.get("refund_applied") else ' · no refund assumed')

@@ -108,7 +108,24 @@ bundles:                                   # optional: one SKU covering several 
 
 Routes: `domestic` (home country), `collect` (you pick the parcel up in that country and import it
 yourself — no carrier fee; local VAT deducted only when `vat_refund: yes` and `refund_possible`),
-`ship` (sent to the home country; `clearance_fee` added). Duty is 0 for CH since 2024.
+`ship` (sent to the home country; `clearance_fee` added), `ddp` (the shop's price already includes
+your VAT and customs — e.g. a foreign shop's Swiss storefront; landed = sticker + shipping). A source
+pins a non-default route with `route: <key>`. Shipping is counted once per seller and order in the
+cheapest-set calculation. Duty is 0 for CH since 2024.
+
+Shops whose price depends on a session setting (currency/country switch) take a `prelude` request and
+a `session` name; sources sharing a session share one cookie jar per run:
+
+```yaml
+      - id: shop_ch
+        seller: Shop → CH (DDP)
+        url: https://shop.de/product
+        country: DE
+        route: shop_ddp
+        session: shop_ch
+        currency: CHF
+        prelude: {method: POST, url: "https://shop.de/en/checkout/configure", data: {currencyId: "<id>"}}
+```
 
 Landed-cost outputs per offer: `landed` (refund applied only when confirmed) and
 `landed_no_refund` (conservative) — both in the entity attributes.
