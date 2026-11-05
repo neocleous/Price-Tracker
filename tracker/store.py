@@ -3,8 +3,10 @@
 from __future__ import annotations
 
 import datetime as dt
+import functools
 import json
 import sqlite3
+import threading
 from pathlib import Path
 from typing import Any
 
@@ -59,12 +61,24 @@ def utcnow() -> str:
     return dt.datetime.now(dt.timezone.utc).replace(microsecond=0).isoformat()
 
 
+def _locked(fn):
+    """Serialise access: one sqlite3 connection is shared by the fetch workers."""
+
+    @functools.wraps(fn)
+    def wrapper(self, *a, **kw):
+        with self._lock:
+            return fn(self, *a, **kw)
+
+    return wrapper
+
+
 class Store:
     def __init__(self, path: Path | str):
+        self._lock = threading.RLock()
         self.path = Path(path)
         if str(self.path) != ":memory:":
             self.path.parent.mkdir(parents=True, exist_ok=True)
-        self.db = sqlite3.connect(str(self.path), check_same_thread=False)
+        self.db = sqlite3.connect(str(self.path), check_same_thread=False, timeout=30)
         self.db.row_factory = sqlite3.Row
         self.db.executescript(SCHEMA)
         self.db.execute("PRAGMA journal_mode=WAL")
@@ -178,3 +192,8 @@ class Store:
             "INSERT OR REPLACE INTO state (key, value, updated) VALUES (?,?,?)", (key, json.dumps(value), utcnow())
         )
         self.db.commit()
+
+
+for _name, _fn in list(vars(Store).items()):
+    if callable(_fn) and not _name.startswith("_"):
+        setattr(Store, _name, _locked(_fn))

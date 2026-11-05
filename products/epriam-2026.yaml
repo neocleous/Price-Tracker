@@ -120,6 +120,7 @@ components:
         seller: MY SNOWFLAKE CH
         url: https://mysnowflake.ch/en/products/cybex-priam-e-priam-style-seat-pack-comfort-sepia-black
         country: CH
+        interval_hours: 4       # shop answered 403 to hourly fetches (2026-11-05); poll gently
         match: {name_regex: "Seat Pack"}
       - id: babywalz_ch
         seller: baby-walz CH
@@ -205,6 +206,7 @@ components:
         seller: MY SNOWFLAKE CH
         url: https://mysnowflake.ch/en/collections/cybex/products/cybex-cloud-t-i-size-plus-babyschale-sepia-black
         country: CH
+        interval_hours: 4       # shop answered 403 to hourly fetches (2026-11-05); poll gently
         notes: Plus variant only
         match: {name_regex: "Cloud T"}
       - id: bambinou_fr
@@ -258,6 +260,7 @@ components:
         seller: MY SNOWFLAKE CH
         url: https://mysnowflake.ch/en/collections/cybex/products/cybex-base-t-schwarz
         country: CH
+        interval_hours: 4       # shop answered 403 to hourly fetches (2026-11-05); poll gently
         match: {name_regex: "Base T"}
 
 # ---------------------------------------------------------------------------
@@ -273,6 +276,7 @@ bundles:
         seller: MY SNOWFLAKE CH
         url: https://mysnowflake.ch/en/products/cybex-e-priam-style-matt-black-sepia-black
         country: CH
+        interval_hours: 4       # shop answered 403 to hourly fetches (2026-11-05); poll gently
         match: {sku_regex: "^\\d+_\\d+$"}          # two article numbers = frame + seat
       - id: bambinou_fr
         seller: Bambinou FR
@@ -299,6 +303,7 @@ bundles:
         seller: MY SNOWFLAKE CH
         url: https://mysnowflake.ch/en/products/cybex-e-priam-style-matt-black-sepia-black
         country: CH
+        interval_hours: 4       # shop answered 403 to hourly fetches (2026-11-05); poll gently
         match: {sku_regex: "^\\d+_\\d+_\\d+$"}     # three article numbers = frame + seat + cot
       - id: kindermaxx_de
         seller: Kindermaxx DE
