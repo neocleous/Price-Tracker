@@ -83,8 +83,13 @@ def _row_to_best(row, product: Product, group_id: str, country_lookup: dict) -> 
 
 
 def build_snapshot(product: Product, store: Store, fx_rates: dict[str, float], run_stats: dict,
-                   new_obs_ids: set[int] | None = None) -> Snapshot:
-    now = dt.datetime.now(dt.timezone.utc)
+                   new_obs_ids: set[int] | None = None, as_of: dt.datetime | None = None,
+                   record: bool = True) -> Snapshot:
+    """Aggregate the latest observations. With ``as_of`` the view is computed from
+    observations up to that moment (history backfill); ``record=False`` skips
+    the all-time-low bookkeeping and event generation."""
+    now = as_of or dt.datetime.now(dt.timezone.utc)
+    as_of_iso = now.isoformat() if as_of else None
     stale_cutoff = (now - dt.timedelta(hours=product.alerts.stale_after_hours)).isoformat()
     home = product.imports.home_country
     lookup = {(gid, s.id): s for gid, _b, _g, s in product.all_sources()}
@@ -96,7 +101,7 @@ def build_snapshot(product: Product, store: Store, fx_rates: dict[str, float], r
     snap = Snapshot(product_id=product.id, ts=now.replace(microsecond=0).isoformat(), fx=fx_rates)
 
     def _group_view(group_id: str) -> tuple[dict[str, Any], Best | None, Best | None]:
-        rows = store.latest_per_source(product.id, group_id, ok_only=True)
+        rows = store.latest_per_source(product.id, group_id, ok_only=True, as_of=as_of_iso)
         sources_view: dict[str, Any] = {}
         eligible: list[Best] = []
         for sid, row in rows.items():
@@ -136,7 +141,8 @@ def build_snapshot(product: Product, store: Store, fx_rates: dict[str, float], r
     snap.total = _cheapest_set(product, comp_best, bundle_best, label="total")
     snap.total["home"] = _cheapest_set(product, comp_best_home, {}, label="total_home")
 
-    snap.events = _events_and_alltime(product, store, snap, comp_best, bundle_best, new_obs_ids or set())
+    if record:
+        snap.events = _events_and_alltime(product, store, snap, comp_best, bundle_best, new_obs_ids or set())
     snap.health = {
         **run_stats,
         "stale_after_hours": product.alerts.stale_after_hours,

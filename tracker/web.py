@@ -7,6 +7,7 @@ scheduler thread.
   GET /                 overview of every product
   GET /p/<product id>   one product
   GET /api/<id>.json    snapshot + health as JSON
+  GET /api/<id>/history.json?days=30|all   cheapest-set history, change log, all-time low
   GET /healthz          200 while the last run is younger than 10 h
 """
 
@@ -25,6 +26,7 @@ from .compute import build_snapshot, health_for
 from .config import Product, Settings
 from .scheduler import next_fire
 from .store import Store
+from .history import series as history_series
 
 log = logging.getLogger(__name__)
 
@@ -57,6 +59,11 @@ tr.best td{background:color-mix(in srgb,var(--ok) 8%,transparent)}
 .notes{margin:0;padding-left:18px;color:var(--muted);font-size:13px}.notes li{margin:3px 0}
 footer{margin-top:36px;color:var(--muted);font-size:12px}
 details summary{cursor:pointer;color:var(--muted)}
+.chart{width:100%;height:auto;display:block}
+.legend{display:flex;gap:14px;color:var(--muted);font-size:12px;margin:6px 0 0}.legend i{display:inline-block;width:18px;height:0;border-top:2px solid var(--accent);vertical-align:middle;margin-right:6px}.legend i.h{border-top:2px dashed var(--muted)}
+.range a{margin-right:10px}.range a.on{font-weight:600;text-decoration:underline}
+.atl{display:flex;flex-wrap:wrap;gap:6px 18px;align-items:baseline}.atl .big{margin:0}
+.delta-up{color:var(--bad)}.delta-down{color:var(--ok)}
 .tag{font-size:11px;padding:1px 6px;border-radius:4px;background:var(--chip);color:var(--muted);margin-left:6px;vertical-align:middle}
 """
 
@@ -135,6 +142,101 @@ def _spark(points: list[tuple[str, float]], w=110, h=22) -> str:
             f'<polyline fill="none" stroke="{color}" stroke-width="1.5" points="{pts}"/></svg>')
 
 
+def _nice_ticks(lo: float, hi: float, n: int = 5) -> list[float]:
+    import math
+    span = max(hi - lo, 1.0)
+    raw = span / n
+    mag = 10 ** math.floor(math.log10(raw))
+    step = next(m * mag for m in (1, 2, 2.5, 5, 10) if m * mag >= raw)
+    start = math.floor(lo / step) * step
+    ticks = []
+    t = start
+    while t <= hi + step * 0.5:
+        ticks.append(round(t, 6))
+        t += step
+    return ticks
+
+
+def _chart(points: list[dict], atl: dict | None, tz: ZoneInfo, cur: str, w: int = 900, h: int = 280) -> str:
+    """Step chart of the cheapest set (solid) and home-only set (dashed), all-time low marked."""
+    ml, mr, mt, mb = 64, 16, 14, 36
+    pw, ph = w - ml - mr, h - mt - mb
+    xs = [dt.datetime.fromisoformat(p["ts"]).timestamp() for p in points]
+    ys = [p["total"] for p in points if p["total"] is not None] + [p["home"] for p in points if p["home"] is not None]
+    if atl:
+        ys.append(atl["total"])
+    x0, x1 = min(xs), max(xs)
+    if x1 == x0:
+        x1 = x0 + 3600
+    lo, hi = min(ys), max(ys)
+    pad = max((hi - lo) * 0.08, 10)
+    lo, hi = lo - pad, hi + pad
+    ticks = _nice_ticks(lo, hi)
+    lo, hi = min(lo, ticks[0]), max(hi, ticks[-1])
+
+    def X(t): return ml + (t - x0) / (x1 - x0) * pw
+    def Y(v): return mt + (hi - v) / (hi - lo) * ph
+
+    def path(key: str) -> str:
+        d, prev = [], None
+        for p in points:
+            v = p[key]
+            if v is None:
+                prev = None
+                continue
+            x, y = X(dt.datetime.fromisoformat(p["ts"]).timestamp()), Y(v)
+            if prev is None:
+                d.append(f"M{x:.1f},{y:.1f}")
+            else:
+                d.append(f"H{x:.1f}V{y:.1f}")  # step-after: price holds until the next observation
+            prev = (x, y)
+        if prev is not None:
+            d.append(f"H{ml + pw:.1f}")
+        return " ".join(d)
+
+    g = [f'<svg class="chart" viewBox="0 0 {w} {h}" role="img" aria-label="price history">']
+    for t in ticks:
+        if lo <= t <= hi:
+            y = Y(t)
+            g.append(f'<line x1="{ml}" x2="{ml + pw}" y1="{y:.1f}" y2="{y:.1f}" stroke="var(--line)" stroke-width="1"/>'
+                     f'<text x="{ml - 8}" y="{y + 4:.1f}" text-anchor="end" font-size="11" fill="var(--muted)">{t:,.0f}</text>')
+    # x labels: ~6 evenly spaced
+    span = x1 - x0
+    nlab = 6
+    for i in range(nlab + 1):
+        t = x0 + span * i / nlab
+        d = dt.datetime.fromtimestamp(t, dt.timezone.utc).astimezone(tz)
+        lbl = d.strftime("%d.%m %H:%M") if span < 3 * 86400 else d.strftime("%d.%m")
+        anchor = "start" if i == 0 else ("end" if i == nlab else "middle")
+        g.append(f'<text x="{X(t):.1f}" y="{h - 12}" text-anchor="{anchor}" font-size="11" fill="var(--muted)">{lbl}</text>')
+    g.append(f'<path d="{path("home")}" fill="none" stroke="var(--muted)" stroke-width="1.5" stroke-dasharray="5 4"/>')
+    g.append(f'<path d="{path("total")}" fill="none" stroke="var(--accent)" stroke-width="2.2"/>')
+    # all-time low marker (only if inside the plotted range)
+    if atl:
+        ta = dt.datetime.fromisoformat(atl["ts"]).timestamp()
+        if x0 <= ta <= x1:
+            x, y = X(ta), Y(atl["total"])
+            label = f'{atl["total"]:,.0f} {cur} · {dt.datetime.fromisoformat(atl["ts"]).astimezone(tz).strftime("%d.%m %H:%M")}'
+            tx = x + 10 if x < ml + pw * 0.7 else x - 10
+            g.append(f'<circle cx="{x:.1f}" cy="{y:.1f}" r="5" fill="var(--ok)" stroke="var(--card)" stroke-width="2"/>'
+                     f'<text x="{tx:.1f}" y="{y - 10:.1f}" text-anchor="{"start" if tx > x else "end"}" font-size="12" font-weight="600" fill="var(--ok)">low {label}</text>')
+    # current value label
+    last = next((p for p in reversed(points) if p["total"] is not None), None)
+    if last:
+        y = Y(last["total"])
+        g.append(f'<text x="{ml + pw:.1f}" y="{y - 8:.1f}" text-anchor="end" font-size="12" font-weight="600" fill="var(--accent)">now {last["total"]:,.0f}</text>')
+    # hover points (titles)
+    for p in points:
+        if p["total"] is None:
+            continue
+        x, y = X(dt.datetime.fromisoformat(p["ts"]).timestamp()), Y(p["total"])
+        when = dt.datetime.fromisoformat(p["ts"]).astimezone(tz).strftime("%Y-%m-%d %H:%M")
+        g.append(f'<circle cx="{x:.1f}" cy="{y:.1f}" r="6" fill="transparent"><title>{when}: {p["total"]:,.2f} {cur}'
+                 + (f' · home {p["home"]:,.2f}' if p["home"] is not None else "") + '</title></circle>')
+    g.append("</svg>")
+    return "".join(g)
+
+
 class Renderer:
     def __init__(self, settings: Settings, products: list[Product]):
         self.settings = settings
@@ -159,17 +261,61 @@ class Renderer:
         return {"product": p.id, "name": p.name, "ts": snap.ts, "total": snap.total, "components": snap.components,
                 "bundles": snap.bundles, "alltime": snap.alltime, "health": snap.health, "fx": snap.fx}
 
+    # ------------------------------------------------------------------ history
+    def _history_section(self, store: Store, p: Product, days: int | None, tz: ZoneInfo, cur: str) -> str:
+        hist_all = history_series(store, p)            # all-time low must consider everything
+        hist = history_series(store, p, days) if days else hist_all
+        atl, now_pt = hist_all["alltime"], hist_all["current"]
+        out = ['<h2 id="history">Cheapest complete set over time</h2>']
+        # range selector
+        opts = [(7, "7 d"), (30, "30 d"), (90, "90 d"), (None, "all")]
+        out.append('<p class="sub range">' + " ".join(
+            f'<a class="{"on" if d == days else ""}" href="?days={d if d else "all"}#history">{lbl}</a>' for d, lbl in opts) + "</p>")
+        # all-time low card
+        if atl:
+            cur_total = now_pt["total"] if now_pt else None
+            delta = (cur_total - atl["total"]) if cur_total is not None else None
+            dtxt = ("" if delta is None else
+                    (f'<span class="delta-up">+{_money(delta)} above the low</span>' if delta > 0.005 else '<span class="delta-down">at the all-time low</span>'))
+            parts = ", ".join(f'{_esc(i.get("seller"))} ({_esc(i.get("id"))})' for i in atl["items"] if not i.get("missing") and i.get("kind") != "adjustment")
+            out.append(f'<div class="card"><div class="atl"><span class="muted">All-time low</span><div class="big">{_money(atl["total"])}<small>{cur}</small></div>'
+                       f'<span class="muted">on {_esc(_local(atl["ts"], tz))}</span><span>{dtxt}</span></div>'
+                       f'<div class="small muted" style="margin-top:4px">{parts}</div></div>')
+        pts = [x for x in hist["points"] if x["total"] is not None]
+        if len(pts) >= 2:
+            out.append('<div class="card" style="margin-top:12px">' + _chart(hist["points"], atl, tz, cur) +
+                       '<div class="legend"><span><i></i>cheapest complete set</span><span><i class="h"></i>home-country sellers only</span>'
+                       '<span>● all-time low</span></div></div>')
+        elif pts:
+            out.append('<p class="sub">Only one data point so far — the chart appears after the next run.</p>')
+        else:
+            out.append('<p class="sub">No history yet.</p>')
+        # change log
+        ch = hist["changes"]
+        if ch:
+            rows = "".join(
+                f'<tr><td class="small muted">{_esc(_local(c["ts"], tz))}</td><td class="num">{_money(c["from"])}</td>'
+                f'<td class="num"><b>{_money(c["to"])}</b></td>'
+                f'<td class="num {"delta-up" if c["delta"] > 0 else "delta-down"}">{"+" if c["delta"] > 0 else ""}{_money(c["delta"])}</td>'
+                f'<td class="small">{"<br>".join(_esc(d) for d in c["drivers"]) or "—"}</td></tr>'
+                for c in ch[:40])
+            out.append('<h3 style="margin-top:14px">Changes</h3><div class="tw"><table><thead><tr><th>When</th><th class="num">From</th>'
+                       '<th class="num">To</th><th class="num">Δ</th><th>What moved</th></tr></thead><tbody>' + rows + "</tbody></table></div>")
+        else:
+            out.append('<p class="sub small">No change in the cheapest set within this range.</p>')
+        return "".join(out)
+
     # ------------------------------------------------------------------ html
-    def page(self, store: Store, only: str | None = None) -> str:
+    def page(self, store: Store, only: str | None = None, days: int | None = 30) -> str:
         prods = [p for p in self.products if only is None or p.id == only]
-        body = "".join(self._product(store, p) for p in prods) if prods else "<p>No such product.</p>"
+        body = "".join(self._product(store, p, days) for p in prods) if prods else "<p>No such product.</p>"
         title = prods[0].name if len(prods) == 1 else "Price tracker"
         return (f'<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">'
                 f"<title>{_esc(title)}</title><style>{CSS}</style></head><body><div class=\"wrap\">{body}"
                 f'<footer>ha-price-tracker {__version__} · <a href="https://github.com/neocleous/price-tracker">source</a> · '
-                f'<a href="/api/{_esc(prods[0].id) if prods else ""}.json">json</a></footer></div></body></html>')
+                f'<a href="/api/{_esc(prods[0].id) if prods else ""}.json">json</a> · <a href="/api/{_esc(prods[0].id) if prods else ""}/history.json?days=all">history json</a></footer></div></body></html>')
 
-    def _product(self, store: Store, p: Product) -> str:
+    def _product(self, store: Store, p: Product, days: int | None = 30) -> str:
         now = dt.datetime.now(dt.timezone.utc)
         tz = ZoneInfo(p.schedule.timezone)
         cur = p.imports.reporting_currency
@@ -224,6 +370,7 @@ class Renderer:
         out.append(_set_card("Cheapest complete set", snap.total, at_txt))
         out.append(_set_card(f"Cheapest complete set — {p.imports.home_country} sellers only", snap.total.get("home", {})))
         out.append("</div>")
+        out.append(self._history_section(store, p, days, tz, cur))
 
         # ---- per group tables
         def _group_table(grp, view, is_bundle: bool) -> str:
@@ -318,9 +465,20 @@ class _Handler(BaseHTTPRequestHandler):
         log.debug("web: " + fmt, *args)
 
     def do_GET(self):  # noqa: N802
-        path = self.path.split("?")[0]
+        path, _, qs = self.path.partition("?")
+        params = dict(kv.split("=", 1) for kv in qs.split("&") if "=" in kv)
+        d = params.get("days", "30")
+        days = None if d == "all" else (int(d) if d.isdigit() else 30)
         store = Store(self.db_path)
         try:
+            if path.startswith("/api/") and path.endswith("/history.json"):
+                pid = path[5:-len("/history.json")]
+                prod = next((x for x in self.renderer.products if x.id == pid), None)
+                if prod is None:
+                    self._send(404, "not found", "text/plain")
+                else:
+                    self._send(200, json.dumps(history_series(store, prod, days), ensure_ascii=False, default=str), "application/json")
+                return
             if path == "/healthz":
                 last = max((store.last_run(p.id) for p in self.renderer.products), key=lambda r: (r["ts_end"] if r else ""), default=None)
                 ok = bool(last) and (dt.datetime.now(dt.timezone.utc) - dt.datetime.fromisoformat(last["ts_end"])).total_seconds() < 10 * 3600
@@ -332,9 +490,9 @@ class _Handler(BaseHTTPRequestHandler):
                 else:
                     self._send(200, json.dumps(data, ensure_ascii=False, default=str), "application/json")
             elif path == "/" or path == "/index.html":
-                self._send(200, self.renderer.page(store), "text/html")
+                self._send(200, self.renderer.page(store, days=days), "text/html")
             elif path.startswith("/p/"):
-                self._send(200, self.renderer.page(store, only=path[3:].strip("/")), "text/html")
+                self._send(200, self.renderer.page(store, only=path[3:].strip("/"), days=days), "text/html")
             else:
                 self._send(404, "not found", "text/plain")
         except Exception as e:  # noqa: BLE001

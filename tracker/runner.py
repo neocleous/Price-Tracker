@@ -8,6 +8,7 @@ import logging
 from concurrent.futures import ThreadPoolExecutor
 
 from .compute import Snapshot, build_snapshot, health_for
+from .history import record_snapshot
 from .config import Product, Settings, Source
 from .fetch import Fetcher, FetchError
 from .fx import FX
@@ -104,6 +105,7 @@ class Runner:
         fx_rates = {c: fx.rate(c) for c in _currencies(product)}
         snap = build_snapshot(product, self.store, fx_rates, {}, new_ids)
         snap.health = health_for(product, snap, fetched_this_run=len(due), failed_this_run=errors, run_id=run_id)
+        record_snapshot(self.store, product, snap, run_id)
         if publish and self.publisher is not None:
             self.publisher.publish_snapshot(product, snap)
         return snap

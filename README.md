@@ -34,7 +34,11 @@ One device per product (e.g. *Cybex e-Priam 2026*) with:
 The container serves a read-only overview on port **8099** (`http://<nas-ip>:8099/`): cheapest complete set with
 links, the Swiss-only alternative, every component and bundle with each shop's sticker and landed price, VAT
 assumption, stock, 30-day sparkline, last fetch and last error, the landed-cost rules, and coverage notes.
-`/api/<product>.json` returns the same as JSON; `/healthz` is 200 while the last run is under 10 h old.
+It also charts the **cheapest complete set over time** (solid) and the home-country-only set (dashed), marks the
+**all-time low**, and lists every change with what moved (`?days=7|30|90|all`). One history point is stored per
+run; `price-tracker backfill` reconstructs points for runs made before this existed (also done automatically at start).
+`/api/<product>.json` returns the snapshot as JSON, `/api/<product>/history.json?days=all` the history;
+`/healthz` is 200 while the last run is under 10 h old.
 Set `WEB_PORT=0` to disable. `price-tracker web --port 8099` serves it standalone (e.g. against a copied database).
 
 ## Install (HexOS / TrueNAS SCALE, Docker Compose)
@@ -139,6 +143,7 @@ price-tracker validate   products/x.yaml [--report out.md] [--json out.json]
 price-tracker discovery  [--product ID]       # republish HA discovery
 price-tracker show       [--product ID]       # latest snapshot as JSON
 price-tracker web        [--product ID] [--port N]   # status page only
+price-tracker backfill   [--product ID]       # rebuild cheapest-set history from past runs
 price-tracker fetch      URL [--country DE] [--playwright]   # debug a page
 ```
 

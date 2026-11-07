@@ -49,6 +49,16 @@ CREATE TABLE IF NOT EXISTS fx (
     rate REAL NOT NULL,
     PRIMARY KEY (date, base, quote)
 );
+CREATE TABLE IF NOT EXISTS snapshots (
+    id INTEGER PRIMARY KEY,
+    ts TEXT NOT NULL,
+    product_id TEXT NOT NULL,
+    run_id INTEGER,
+    total REAL,
+    total_home REAL,
+    items TEXT
+);
+CREATE INDEX IF NOT EXISTS snap_lookup ON snapshots(product_id, ts);
 CREATE TABLE IF NOT EXISTS state (
     key TEXT PRIMARY KEY,
     value TEXT NOT NULL,
@@ -105,15 +115,41 @@ class Store:
     def observation(self, obs_id: int) -> sqlite3.Row | None:
         return self.db.execute("SELECT * FROM observations WHERE id=?", (obs_id,)).fetchone()
 
-    def latest_per_source(self, product_id: str, group_id: str, ok_only: bool = True) -> dict[str, sqlite3.Row]:
-        """Latest observation for each source of a group (component/bundle)."""
+    def latest_per_source(self, product_id: str, group_id: str, ok_only: bool = True,
+                          as_of: str | None = None) -> dict[str, sqlite3.Row]:
+        """Latest observation for each source of a group (component/bundle),
+        optionally only considering observations up to ``as_of`` (ISO timestamp)."""
         q = """
         SELECT o.* FROM observations o
         JOIN (SELECT source_id, MAX(id) AS mid FROM observations
-              WHERE product_id=? AND group_id=? {okf} GROUP BY source_id) m
+              WHERE product_id=? AND group_id=? {okf} {asof} GROUP BY source_id) m
         ON o.id = m.mid
-        """.format(okf="AND ok=1" if ok_only else "")
-        return {r["source_id"]: r for r in self.db.execute(q, (product_id, group_id))}
+        """.format(okf="AND ok=1" if ok_only else "", asof="AND ts<=?" if as_of else "")
+        params = (product_id, group_id) + ((as_of,) if as_of else ())
+        return {r["source_id"]: r for r in self.db.execute(q, params)}
+
+    # ---------------------------------------------------------------- snapshots
+    def add_snapshot(self, product_id: str, ts: str, total: float | None, total_home: float | None,
+                     items: list, run_id: int | None = None):
+        self.db.execute(
+            "INSERT INTO snapshots (ts, product_id, run_id, total, total_home, items) VALUES (?,?,?,?,?,?)",
+            (ts, product_id, run_id, total, total_home, json.dumps(items, default=str)),
+        )
+        self.db.commit()
+
+    def snapshots(self, product_id: str, days: int | None = None) -> list[sqlite3.Row]:
+        if days:
+            since = (dt.datetime.now(dt.timezone.utc) - dt.timedelta(days=days)).isoformat()
+            return list(self.db.execute(
+                "SELECT * FROM snapshots WHERE product_id=? AND ts>=? ORDER BY ts", (product_id, since)))
+        return list(self.db.execute("SELECT * FROM snapshots WHERE product_id=? ORDER BY ts", (product_id,)))
+
+    def snapshot_count(self, product_id: str) -> int:
+        return int(self.db.execute("SELECT COUNT(*) FROM snapshots WHERE product_id=?", (product_id,)).fetchone()[0])
+
+    def runs(self, product_id: str) -> list[sqlite3.Row]:
+        return list(self.db.execute(
+            "SELECT * FROM runs WHERE product_id=? AND ts_end IS NOT NULL ORDER BY id", (product_id,)))
 
     def last_source_run(self, product_id: str, group_id: str, source_id: str) -> dt.datetime | None:
         r = self.db.execute(

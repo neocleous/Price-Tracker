@@ -6,6 +6,7 @@
   price-tracker discovery  [--product ID] [--reset]   # (re)publish HA discovery; --reset re-creates entities
   price-tracker show       [--product ID]      # print latest snapshot as JSON
   price-tracker web        [--product ID] [--port N]   # status page only (schedule serves it too)
+  price-tracker backfill   [--product ID]      # (re)build cheapest-set history from past runs
   price-tracker fetch      URL [--country CC]  # debug: dump offers found on a page
 """
 
@@ -24,6 +25,7 @@ from .config import Product, Settings, load_product, load_products
 from .mqtt import Publisher
 from .runner import Runner
 from .scheduler import run_forever
+from .history import backfill
 from .store import Store
 from .web import start_web
 
@@ -68,6 +70,8 @@ def cmd_schedule(args, settings: Settings):
     pub = Publisher(settings, store)
     runner = Runner(settings, store, pub)
     prods = _products(settings, args.product, None)
+    for p in prods:
+        backfill(store, p)  # history snapshots for runs made before this feature existed
     start_web(settings, prods)
     # keep retrying the broker instead of crash-looping the container
     delay = 10
@@ -187,6 +191,14 @@ def cmd_discovery(args, settings: Settings):
         store.close()
 
 
+def cmd_backfill(args, settings: Settings):
+    store = Store(settings.db_path)
+    for p in _products(settings, args.product, None):
+        n = backfill(store, p)
+        print(f"{p.id}: {n} snapshots added, {store.snapshot_count(p.id)} total")
+    store.close()
+
+
 def cmd_web(args, settings: Settings):
     """Serve the status page only (no fetching, no MQTT) — e.g. against a copied database."""
     prods = _products(settings, args.product, None)
@@ -252,6 +264,7 @@ def main(argv=None):
     d.add_argument("--reset", action="store_true", help="clear and re-create all entities in HA"); d.set_defaults(fn=cmd_discovery)
     sh = sub.add_parser("show"); sh.add_argument("--product"); sh.set_defaults(fn=cmd_show)
     w = sub.add_parser("web"); w.add_argument("--product"); w.add_argument("--port", type=int); w.set_defaults(fn=cmd_web)
+    bf = sub.add_parser("backfill"); bf.add_argument("--product"); bf.set_defaults(fn=cmd_backfill)
 
     fe = sub.add_parser("fetch"); fe.add_argument("url"); fe.add_argument("--country", default="DE")
     fe.add_argument("--playwright", action="store_true"); fe.add_argument("--dump"); fe.set_defaults(fn=cmd_fetch)
