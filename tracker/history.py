@@ -37,8 +37,13 @@ def backfill(store: Store, product: Product) -> int:
     return n
 
 
+def names_for(product: Product) -> dict[str, str]:
+    return {g.id: g.name for g in (*product.components, *product.bundles)}
+
+
 def series(store: Store, product: Product, days: int | None = None) -> dict:
     """Time series + change log + all-time low, ready for a chart or the API."""
+    names = names_for(product)
     rows = store.snapshots(product.id, days)
     points = [{"ts": r["ts"], "total": r["total"], "home": r["total_home"]} for r in rows]
     changes = []
@@ -53,7 +58,7 @@ def series(store: Store, product: Product, days: int | None = None) -> dict:
             changes.append({
                 "ts": r["ts"], "from": round(prev["total"], 2), "to": round(tot, 2),
                 "delta": round(tot - prev["total"], 2),
-                "drivers": _diff(prev_items, items),
+                "drivers": _diff(prev_items, items, names),
             })
         prev = r
     low = None
@@ -67,25 +72,41 @@ def series(store: Store, product: Product, days: int | None = None) -> dict:
             "current": points[-1] if points else None}
 
 
-def _diff(before: list[dict], after: list[dict]) -> list[str]:
-    """Human-readable reasons a total moved: per component/bundle id, what changed."""
+def _diff(before: list[dict], after: list[dict], names: dict[str, str] | None = None) -> list[str]:
+    """Human-readable reasons a total moved, one sentence per component/bundle."""
+    names = names or {}
     b = {i.get("id"): i for i in before if not i.get("missing")}
     a = {i.get("id"): i for i in after if not i.get("missing")}
     out = []
-    for key in sorted(set(a) | set(b)):
+
+    def nm(key):
+        return names.get(key, str(key).replace("_", " "))
+
+    def money(v):
+        return "—" if v is None else f"{v:,.2f}".replace(",", "\u2009")
+
+    for key in sorted(set(a) | set(b), key=lambda k: (k == "shipping_once_per_order", str(k))):
         x, y = b.get(key), a.get(key)
         if (x or y or {}).get("kind") == "adjustment":
             xv, yv = (x or {}).get("landed", 0) or 0, (y or {}).get("landed", 0) or 0
             if abs(xv - yv) > 0.005:
-                out.append(f"shipping counted once per order: {xv:.2f} → {yv:.2f}")
+                if abs(yv) > 0.005 and abs(xv) < 0.005:
+                    out.append(f"Shipping now counted once for the combined order ({money(yv)})")
+                elif abs(xv) > 0.005 and abs(yv) < 0.005:
+                    out.append("Items no longer share one order, so shipping is counted per item again")
+                else:
+                    out.append(f"Shared-order shipping adjustment changed from {money(xv)} to {money(yv)}")
             continue
         if x is None and y is not None:
-            out.append(f"{key}: now from {y.get('seller', '?')} at {y.get('landed')}")
+            out.append(f"{nm(key)} now comes from {y.get('seller', '?')} at {money(y.get('landed'))}")
         elif y is None and x is not None:
-            out.append(f"{key}: no longer used (was {x.get('seller', '?')} at {x.get('landed')})")
-        elif x and y and (x.get("seller") != y.get("seller") or abs((x.get("landed") or 0) - (y.get("landed") or 0)) > 0.005):
-            if x.get("seller") == y.get("seller"):
-                out.append(f"{key}: {y.get('seller')} {x.get('landed')} → {y.get('landed')}")
-            else:
-                out.append(f"{key}: {x.get('seller')} {x.get('landed')} → {y.get('seller')} {y.get('landed')}")
+            out.append(f"{nm(key)} is no longer part of the set (was {x.get('seller', '?')} at {money(x.get('landed'))})")
+        elif x and y:
+            same_seller = x.get("seller") == y.get("seller")
+            moved = abs((x.get("landed") or 0) - (y.get("landed") or 0)) > 0.005
+            if same_seller and moved:
+                verb = "fell" if (y.get("landed") or 0) < (x.get("landed") or 0) else "rose"
+                out.append(f"{nm(key)} at {y.get('seller')} {verb} from {money(x.get('landed'))} to {money(y.get('landed'))}")
+            elif not same_seller:
+                out.append(f"{nm(key)} switched from {x.get('seller')} ({money(x.get('landed'))}) to {y.get('seller')} ({money(y.get('landed'))})")
     return out

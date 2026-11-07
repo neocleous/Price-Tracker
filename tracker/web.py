@@ -277,7 +277,9 @@ class Renderer:
             delta = (cur_total - atl["total"]) if cur_total is not None else None
             dtxt = ("" if delta is None else
                     (f'<span class="delta-up">+{_money(delta)} above the low</span>' if delta > 0.005 else '<span class="delta-down">at the all-time low</span>'))
-            parts = ", ".join(f'{_esc(i.get("seller"))} ({_esc(i.get("id"))})' for i in atl["items"] if not i.get("missing") and i.get("kind") != "adjustment")
+            names = {g.id: g.name for g in (*p.components, *p.bundles)}
+            parts = " · ".join(f'{_esc(names.get(i.get("id"), i.get("id")))} — {_esc(i.get("seller"))} {_money(i.get("landed"))}'
+                               for i in atl["items"] if not i.get("missing") and i.get("kind") != "adjustment")
             out.append(f'<div class="card"><div class="atl"><span class="muted">All-time low</span><div class="big">{_money(atl["total"])}<small>{cur}</small></div>'
                        f'<span class="muted">on {_esc(_local(atl["ts"], tz))}</span><span>{dtxt}</span></div>'
                        f'<div class="small muted" style="margin-top:4px">{parts}</div></div>')
@@ -319,6 +321,7 @@ class Renderer:
         now = dt.datetime.now(dt.timezone.utc)
         tz = ZoneInfo(p.schedule.timezone)
         cur = p.imports.reporting_currency
+        names = {g.id: g.name for g in (*p.components, *p.bundles)}
         snap = self._snapshot(store, p)
         h = snap.health
         last = store.last_run(p.id)
@@ -346,7 +349,7 @@ class Renderer:
             lis = []
             for i in items:
                 if i.get("missing"):
-                    lis.append(f'<li><span>{_esc(i["id"])}</span><span class="m">no fresh offer</span></li>')
+                    lis.append(f'<li><span>{_esc(names.get(i["id"], i["id"]))}</span><span class="m">no fresh offer</span></li>')
                     continue
                 if i.get("kind") == "adjustment":
                     lis.append(f'<li><span class="m">shipping counted once per order</span><span><b>{_money(i["landed"])}</b></span></li>')
@@ -356,7 +359,7 @@ class Renderer:
                     ' · VAT refund assumed' if i.get("refund_applied") else ' · no refund assumed')
                 lis.append(
                     f'<li><span>{FLAGS.get(i.get("country"), "")} <a href="{_esc(i["url"])}" target="_blank" rel="noopener">{_esc(i["seller"])}</a>'
-                    f' <span class="tag">{kind}: {_esc(i["id"])}</span></span>'
+                    f' <span class="tag">{kind}: {_esc(names.get(i["id"], i["id"]))}</span></span>'
                     f'<span><b>{_money(i["landed"])}</b> <span class="m">({_money(i["sticker"], i["currency"])}{ref})</span></span></li>'
                 )
             val = tot.get("value")
@@ -382,7 +385,7 @@ class Renderer:
             best_sid = (view.get("lowest") or {}).get("source")
             rows = []
             if not grp.sources:
-                rows.append('<tr><td colspan="9" class="muted">No sources configured yet.</td></tr>')
+                rows.append('<tr><td colspan="7" class="muted">No sources configured yet.</td></tr>')
             for src in grp.sources:
                 s = view["sources"].get(src.id)
                 la = latest_any.get(src.id)
@@ -396,7 +399,6 @@ class Renderer:
                     dot, state = "bad", "failing"
                 else:
                     dot, state = "off", "no data yet"
-                cur_src = src.currency or ("CHF" if src.country == "CH" else "EUR")
                 price = _money(s["sticker"], s["currency"]) if s else "—"
                 landed = _money(s["landed"]) if s else "—"
                 nor = (f'<div class="small muted">{_money(s["landed_no_refund"])} without refund</div>'
@@ -412,8 +414,6 @@ class Renderer:
                     f'<td><span class="chip">{vat}</span></td><td>{stock}</td>'
                     f'<td>{_spark(series.get(src.id, []))}</td>'
                     f'<td class="small muted">{_ago(s["fetched_at"], now) if s else (_ago(la["ts"], now) if la is not None else "never")}</td>'
-                    f'<td class="small muted">{_esc(src.parser)} · every {src.interval_hours:g} h</td>'
-                    f'<td class="small muted" title="{_esc(s["currency"] if s else cur_src)}">{_esc(s.get("fresh") and (s["in_stock"] is not False) and "counts" or "ignored") if s else ""}</td>'
                     "</tr>"
                 )
             lo = view.get("lowest")
@@ -426,7 +426,7 @@ class Renderer:
                    + f' · sanity range {grp.bounds.min:.0f}–{grp.bounds.max:.0f} {cur}</p>') if lo else \
                   f'<p class="sub">No fresh in-stock offer · sanity range {grp.bounds.min:.0f}–{grp.bounds.max:.0f} {cur}</p>'
             return (head + sub + '<div class="tw"><table><thead><tr><th>Shop</th><th class="num">Sticker</th><th class="num">Landed</th><th>VAT</th>'
-                    '<th>Stock</th><th>30 d</th><th>Fetched</th><th>Parser</th><th>Rank</th></tr></thead><tbody>'
+                    '<th>Stock</th><th>30 d</th><th>Fetched</th></tr></thead><tbody>'
                     + "".join(rows) + "</tbody></table></div>")
 
         out.append("<h2>Components</h2>")

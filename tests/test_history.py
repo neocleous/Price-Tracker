@@ -32,4 +32,4 @@ def test_backfill_and_series():
     assert [round(x["total"]) for x in h["points"]] == [1400, 1300, 1400]
     assert h["alltime"]["total"] == 1300 and h["alltime"]["ts"].startswith("2026-11-05T09:01")
     assert len(h["changes"]) == 2 and h["changes"][0]["delta"] == 100 and h["changes"][1]["delta"] == -100
-    assert any("frame" in d for d in h["changes"][1]["drivers"])
+    assert any(d.startswith("Frame switched from") for d in h["changes"][1]["drivers"])
