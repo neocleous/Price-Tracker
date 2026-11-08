@@ -1,8 +1,8 @@
 # Source validation — Cybex e-Priam 2026
 
-Run: 2026-11-07T11:46:49+00:00  
+Run: 2026-11-08T11:58:12+00:00  
 Sources OK: **42/47**  
-Cheapest complete set: **2122.87 CHF** (complete=True)
+Cheapest complete set: **2122.14 CHF** (complete=True)
 
 | Group | Source | Country | Parser | Status | Sticker | Landed | Stock | Method | Detail |
 |---|---|---|---|---|---|---|---|---|---|
@@ -14,7 +14,7 @@ Cheapest complete set: **2122.87 CHF** (complete=True)
 | frame | [babywalz_de](https://www.baby-walz.de/p/cybex-platinum-gestell-epriam-style-matt-black-8375445/) | DE | jsonld | ❌ |  |  | None |  | FetchError: HTTP 429 |
 | frame | [mypram_de](https://www.mypram.com/de/cybex-e-priam-style-kinderwagengestell.html) | DE | jsonld | ✅ | 1199.95 EUR | 1186 | None | meta | Cybex e-Priam Kinderwagengestell / mypram |
 | frame | [kindermaxx_de](https://www.kindermaxx.de/en/brand-a-z/cybex/cybex-strollers/cybex-e-priam-5-frame-incl.-seat-hardpart/526000231) | DE | jsonld | ✅ | 1199.95 EUR | 1186 | 1 | jsonld | Cybex E-Priam 5 Frame incl. Seat Hardpart |
-| frame | [kindermaxx_ch](https://www.kindermaxx.de/en/brand-a-z/cybex/cybex-strollers/cybex-e-priam-5-frame-incl.-seat-hardpart/526000231) | DE | jsonld | ✅ | 1101.55 CHF | 1114 | 1 | jsonld | Cybex E-Priam 5 Frame incl. Seat Hardpart |
+| frame | [kindermaxx_ch](https://www.kindermaxx.de/en/brand-a-z/cybex/cybex-strollers/cybex-e-priam-5-frame-incl.-seat-hardpart/526000231) | DE | jsonld | ✅ | 1097.11 CHF | 1110 | 1 | jsonld | Cybex E-Priam 5 Frame incl. Seat Hardpart |
 | seat_pack | [mysnowflake_ch](https://mysnowflake.ch/en/products/cybex-priam-e-priam-style-seat-pack-comfort-sepia-black) | CH | jsonld | ✅ | 259.00 CHF | 259 | 1 | jsonld | Cybex Priam / e-Priam Style Seat Pack Comfort Sepia Black |
 | seat_pack | [babywalz_ch](https://www.baby-walz.ch/de/p/cybex-platinum-8375950) | CH | jsonld | ✅ | 259.00 CHF | 259 | 1 | jsonld | Sitzeinheit PRIAM, ePRIAM Style - sepia black |
 | seat_pack | [babywalz_de](https://www.baby-walz.de/p/cybex-platinum-sitzeinheit-priam-epriam-style-sepia-black-8375488/) | DE | jsonld | ❌ |  |  | None |  | FetchError: HTTP 429 |
@@ -26,7 +26,7 @@ Cheapest complete set: **2122.87 CHF** (complete=True)
 | car_seat | [babywalz_ch](https://www.baby-walz.ch/de/p/cybex-platinum-babyschale-cloud-t-sepia-black-7860668/) | CH | jsonld | ✅ | 224.10 CHF | 224 | 1 | jsonld | Babyschale Cloud T - sepia black |
 | car_seat | [babywalz_de](https://www.baby-walz.de/p/cybex-platinum-babyschale-cloud-t-sepia-black-7860668/) | DE | jsonld | ❌ |  |  | None |  | FetchError: HTTP 429 |
 | car_seat | [kindermaxx_de](https://www.kindermaxx.de/en/car-seats/baby-car-seat-0-13-kg/cybex-cloud-t-i-size-baby-car-seat) | DE | jsonld | ✅ | 199.99 EUR | 198 | 1 | jsonld | Cybex Cloud T i-Size baby car seat |
-| car_seat | [kindermaxx_ch](https://www.kindermaxx.de/en/car-seats/baby-car-seat-0-13-kg/cybex-cloud-t-i-size-baby-car-seat) | DE | jsonld | ✅ | 192.73 CHF | 206 | 1 | jsonld | Cybex Cloud T i-Size baby car seat |
+| car_seat | [kindermaxx_ch](https://www.kindermaxx.de/en/car-seats/baby-car-seat-0-13-kg/cybex-cloud-t-i-size-baby-car-seat) | DE | jsonld | ✅ | 191.96 CHF | 205 | 1 | jsonld | Cybex Cloud T i-Size baby car seat |
 | car_seat | [mysnowflake_ch](https://mysnowflake.ch/en/collections/cybex/products/cybex-cloud-t-i-size-plus-babyschale-sepia-black) | CH | jsonld | ✅ | 279.00 CHF | 279 | 1 | jsonld | Cybex Cloud T i-Size Plus Infant Car Seat Sepia Black |
 | car_seat | [bambinou_fr](https://www.bambinou.com/siege-auto-cloud-t-i-size-groupe-0-plus-cybex) | FR | jsonld | ✅ | 214.90 EUR | 237 | 1 | jsonld | Siège-auto Cloud T i-Size groupe 0+ - Mirage Grey |
 | base_t | [cybex_ch](https://www.cybex-online.com/de/ch/p/cs-pl-base-t.html) | CH | jsonld | ✅ | 229.00 CHF | 229 | 1 | jsonld | Base T - Black |
@@ -34,11 +34,11 @@ Cheapest complete set: **2122.87 CHF** (complete=True)
 | base_t | [babywalz_ch](https://www.baby-walz.ch/de/p/cybex-platinum-isofix-basis-base-t-fuer-cloud-t-sirona-t-7860536/) | CH | jsonld | ✅ | 224.10 CHF | 224 | 1 | jsonld | Isofix-Basis Base T für Cloud T, Sirona T |
 | base_t | [babywalz_de](https://www.baby-walz.de/p/cybex-platinum-isofix-basis-base-t-fuer-cloud-t-sirona-t-7860536/) | DE | jsonld | ❌ |  |  | None |  | FetchError: HTTP 429 |
 | base_t | [kindermaxx_de](https://www.kindermaxx.de/en/car-seats/isofix-base/cybex-base-t-i-size-base-station) | DE | jsonld | ✅ | 199.00 EUR | 197 | 1 | jsonld | Cybex Base T i-Size Base Station |
-| base_t | [kindermaxx_ch](https://www.kindermaxx.de/en/car-seats/isofix-base/cybex-base-t-i-size-base-station) | DE | jsonld | ✅ | 182.68 CHF | 196 | 1 | jsonld | Cybex Base T i-Size Base Station |
+| base_t | [kindermaxx_ch](https://www.kindermaxx.de/en/car-seats/isofix-base/cybex-base-t-i-size-base-station) | DE | jsonld | ✅ | 181.95 CHF | 195 | 1 | jsonld | Cybex Base T i-Size Base Station |
 | base_t | [mysnowflake_ch](https://mysnowflake.ch/en/collections/cybex/products/cybex-base-t-schwarz) | CH | jsonld | ✅ | 249.00 CHF | 249 | 1 | jsonld | Cybex Base T Black |
 | style_frame_seat | [mysnowflake_ch](https://mysnowflake.ch/en/products/cybex-e-priam-style-matt-black-sepia-black) | CH | jsonld | ✅ | 1488.00 CHF | 1488 | 1 | jsonld | Cybex e-Priam Style Matt Black/Sepia Black |
 | style_frame_seat | [bambinou_fr](https://www.bambinou.com/poussette-e-priam-style-2026-a-assistance-electrique-cybex) | FR | jsonld | ✅ | 1372.90 EUR | 1382 | 1 | jsonld | Poussette e-Priam Style 2026 à assistance électrique |
-| style_set | [cybex_ch](https://www.cybex-online.com/de/ch/p/set-st-pl-e-priam-3-style.html) | CH | jsonld | ✅ | 1947.00 CHF | 1947 | 1 | jsonld | e-Priam - Style Collection |
+| style_set | [cybex_ch](https://www.cybex-online.com/de/ch/p/set-st-pl-e-priam-3-style.html) | CH | jsonld | ✅ | 1997.00 CHF | 1997 | 1 | jsonld | e-Priam - Style Collection |
 | style_set | [cybex_de](https://www.cybex-online.com/de/de/p/set-st-pl-e-priam-3-style.html) | DE | jsonld | ✅ | 1949.85 EUR | 1927 | 1 | jsonld | e-Priam - Style Collection |
 | style_set | [mysnowflake_ch](https://mysnowflake.ch/en/products/cybex-e-priam-style-matt-black-sepia-black) | CH | jsonld | ✅ | 1947.00 CHF | 1947 | 1 | jsonld | Cybex e-Priam Style Matt Black/Sepia Black |
 | style_set | [kindermaxx_de](https://www.kindermaxx.de/en/pushchair/combi-pram/cybex-e-priam-5-style-kombikinderwagen/526000255-526000297-526000353.16) | DE | jsonld | ✅ | 1899.00 EUR | 1877 | 1 | jsonld | Cybex E-Priam 5 Style Kombikinderwagen |
@@ -58,8 +58,8 @@ Cheapest complete set: **2122.87 CHF** (complete=True)
 
 ```json
 {
-  "value": 2122.87,
-  "partial_value": 2122.87,
+  "value": 2122.14,
+  "partial_value": 2122.14,
   "complete": true,
   "items": [
     {
@@ -75,7 +75,7 @@ Cheapest complete set: **2122.87 CHF** (complete=True)
       "in_stock": true,
       "country": "DE",
       "vat_refund": "unknown",
-      "fetched_at": "2026-11-07T11:46:33+00:00",
+      "fetched_at": "2026-11-08T11:57:56+00:00",
       "shipping": 0.0
     },
     {
@@ -91,7 +91,7 @@ Cheapest complete set: **2122.87 CHF** (complete=True)
       "in_stock": true,
       "country": "DE",
       "vat_refund": "unknown",
-      "fetched_at": "2026-11-07T11:46:11+00:00",
+      "fetched_at": "2026-11-08T11:57:36+00:00",
       "shipping": 0.0
     },
     {
@@ -100,14 +100,14 @@ Cheapest complete set: **2122.87 CHF** (complete=True)
       "source": "kindermaxx_ch",
       "seller": "Kindermaxx → CH (DDP)",
       "url": "https://www.kindermaxx.de/en/car-seats/isofix-base/cybex-base-t-i-size-base-station",
-      "landed": 195.63,
-      "landed_no_refund": 195.63,
-      "sticker": 182.68,
+      "landed": 194.9,
+      "landed_no_refund": 194.9,
+      "sticker": 181.95,
       "currency": "CHF",
       "in_stock": true,
       "country": "DE",
       "vat_refund": "unknown",
-      "fetched_at": "2026-11-07T11:46:22+00:00",
+      "fetched_at": "2026-11-08T11:57:45+00:00",
       "shipping": 12.95
     }
   ],
@@ -129,7 +129,7 @@ Cheapest complete set: **2122.87 CHF** (complete=True)
         "in_stock": true,
         "country": "CH",
         "vat_refund": "unknown",
-        "fetched_at": "2026-11-07T11:45:36+00:00",
+        "fetched_at": "2026-11-08T11:56:58+00:00",
         "shipping": 0.0
       },
       {
@@ -145,7 +145,7 @@ Cheapest complete set: **2122.87 CHF** (complete=True)
         "in_stock": true,
         "country": "CH",
         "vat_refund": "unknown",
-        "fetched_at": "2026-11-07T11:45:42+00:00",
+        "fetched_at": "2026-11-08T11:57:03+00:00",
         "shipping": 0.0
       },
       {
@@ -161,7 +161,7 @@ Cheapest complete set: **2122.87 CHF** (complete=True)
         "in_stock": true,
         "country": "CH",
         "vat_refund": "unknown",
-        "fetched_at": "2026-11-07T11:45:44+00:00",
+        "fetched_at": "2026-11-08T11:57:05+00:00",
         "shipping": 0.0
       },
       {
@@ -177,7 +177,7 @@ Cheapest complete set: **2122.87 CHF** (complete=True)
         "in_stock": true,
         "country": "CH",
         "vat_refund": "unknown",
-        "fetched_at": "2026-11-07T11:45:52+00:00",
+        "fetched_at": "2026-11-08T11:57:15+00:00",
         "shipping": 0.0
       },
       {
@@ -193,7 +193,7 @@ Cheapest complete set: **2122.87 CHF** (complete=True)
         "in_stock": true,
         "country": "CH",
         "vat_refund": "unknown",
-        "fetched_at": "2026-11-07T11:46:17+00:00",
+        "fetched_at": "2026-11-08T11:57:41+00:00",
         "shipping": 0.0
       }
     ]

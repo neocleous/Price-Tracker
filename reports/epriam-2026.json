@@ -1,5 +1,5 @@
 {
-  "ts": "2026-11-07T11:46:49+00:00",
+  "ts": "2026-11-08T11:58:12+00:00",
   "product": "epriam-2026",
   "ok": 42,
   "total": 47,
@@ -148,9 +148,9 @@
       "parser": "jsonld",
       "enabled": true,
       "ok": true,
-      "sticker": 1101.55,
+      "sticker": 1097.11,
       "currency": "CHF",
-      "landed": 1114.5,
+      "landed": 1110.06,
       "in_stock": 1,
       "method": "jsonld",
       "title": "Cybex E-Priam 5 Frame incl. Seat Hardpart",
@@ -352,9 +352,9 @@
       "parser": "jsonld",
       "enabled": true,
       "ok": true,
-      "sticker": 192.73,
+      "sticker": 191.96,
       "currency": "CHF",
-      "landed": 205.68,
+      "landed": 204.91,
       "in_stock": 1,
       "method": "jsonld",
       "title": "Cybex Cloud T i-Size baby car seat",
@@ -488,9 +488,9 @@
       "parser": "jsonld",
       "enabled": true,
       "ok": true,
-      "sticker": 182.68,
+      "sticker": 181.95,
       "currency": "CHF",
-      "landed": 195.63,
+      "landed": 194.9,
       "in_stock": 1,
       "method": "jsonld",
       "title": "Cybex Base T i-Size Base Station",
@@ -556,9 +556,9 @@
       "parser": "jsonld",
       "enabled": true,
       "ok": true,
-      "sticker": 1947.0,
+      "sticker": 1997.0,
       "currency": "CHF",
-      "landed": 1947.0,
+      "landed": 1997.0,
       "in_stock": 1,
       "method": "jsonld",
       "title": "e-Priam - Style Collection",
@@ -805,8 +805,8 @@
     }
   ],
   "snapshot_total": {
-    "value": 2122.87,
-    "partial_value": 2122.87,
+    "value": 2122.14,
+    "partial_value": 2122.14,
     "complete": true,
     "items": [
       {
@@ -822,7 +822,7 @@
         "in_stock": true,
         "country": "DE",
         "vat_refund": "unknown",
-        "fetched_at": "2026-11-07T11:46:33+00:00",
+        "fetched_at": "2026-11-08T11:57:56+00:00",
         "shipping": 0.0
       },
       {
@@ -838,7 +838,7 @@
         "in_stock": true,
         "country": "DE",
         "vat_refund": "unknown",
-        "fetched_at": "2026-11-07T11:46:11+00:00",
+        "fetched_at": "2026-11-08T11:57:36+00:00",
         "shipping": 0.0
       },
       {
@@ -847,14 +847,14 @@
         "source": "kindermaxx_ch",
         "seller": "Kindermaxx → CH (DDP)",
         "url": "https://www.kindermaxx.de/en/car-seats/isofix-base/cybex-base-t-i-size-base-station",
-        "landed": 195.63,
-        "landed_no_refund": 195.63,
-        "sticker": 182.68,
+        "landed": 194.9,
+        "landed_no_refund": 194.9,
+        "sticker": 181.95,
         "currency": "CHF",
         "in_stock": true,
         "country": "DE",
         "vat_refund": "unknown",
-        "fetched_at": "2026-11-07T11:46:22+00:00",
+        "fetched_at": "2026-11-08T11:57:45+00:00",
         "shipping": 12.95
       }
     ],
@@ -876,7 +876,7 @@
           "in_stock": true,
           "country": "CH",
           "vat_refund": "unknown",
-          "fetched_at": "2026-11-07T11:45:36+00:00",
+          "fetched_at": "2026-11-08T11:56:58+00:00",
           "shipping": 0.0
         },
         {
@@ -892,7 +892,7 @@
           "in_stock": true,
           "country": "CH",
           "vat_refund": "unknown",
-          "fetched_at": "2026-11-07T11:45:42+00:00",
+          "fetched_at": "2026-11-08T11:57:03+00:00",
           "shipping": 0.0
         },
         {
@@ -908,7 +908,7 @@
           "in_stock": true,
           "country": "CH",
           "vat_refund": "unknown",
-          "fetched_at": "2026-11-07T11:45:44+00:00",
+          "fetched_at": "2026-11-08T11:57:05+00:00",
           "shipping": 0.0
         },
         {
@@ -924,7 +924,7 @@
           "in_stock": true,
           "country": "CH",
           "vat_refund": "unknown",
-          "fetched_at": "2026-11-07T11:45:52+00:00",
+          "fetched_at": "2026-11-08T11:57:15+00:00",
           "shipping": 0.0
         },
         {
@@ -940,7 +940,7 @@
           "in_stock": true,
           "country": "CH",
           "vat_refund": "unknown",
-          "fetched_at": "2026-11-07T11:46:17+00:00",
+          "fetched_at": "2026-11-08T11:57:41+00:00",
           "shipping": 0.0
         }
       ]
