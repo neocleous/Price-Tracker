@@ -1,8 +1,8 @@
 # Source validation — Cybex e-Priam 2026
 
-Run: 2026-11-08T11:58:12+00:00  
+Run: 2026-11-09T13:56:54+00:00  
 Sources OK: **42/47**  
-Cheapest complete set: **2122.14 CHF** (complete=True)
+Cheapest complete set: **2115.63 CHF** (complete=True)
 
 | Group | Source | Country | Parser | Status | Sticker | Landed | Stock | Method | Detail |
 |---|---|---|---|---|---|---|---|---|---|
@@ -25,7 +25,7 @@ Cheapest complete set: **2122.14 CHF** (complete=True)
 | car_seat | [cybex_de](https://www.cybex-online.com/de/de/p/cs-pl-cloud-t-i-size.html) | DE | jsonld | ✅ | 249.95 EUR | 247 | 1 | jsonld | Cloud T i-Size |
 | car_seat | [babywalz_ch](https://www.baby-walz.ch/de/p/cybex-platinum-babyschale-cloud-t-sepia-black-7860668/) | CH | jsonld | ✅ | 224.10 CHF | 224 | 1 | jsonld | Babyschale Cloud T - sepia black |
 | car_seat | [babywalz_de](https://www.baby-walz.de/p/cybex-platinum-babyschale-cloud-t-sepia-black-7860668/) | DE | jsonld | ❌ |  |  | None |  | FetchError: HTTP 429 |
-| car_seat | [kindermaxx_de](https://www.kindermaxx.de/en/car-seats/baby-car-seat-0-13-kg/cybex-cloud-t-i-size-baby-car-seat) | DE | jsonld | ✅ | 199.99 EUR | 198 | 1 | jsonld | Cybex Cloud T i-Size baby car seat |
+| car_seat | [kindermaxx_de](https://www.kindermaxx.de/en/car-seats/baby-car-seat-0-13-kg/cybex-cloud-t-i-size-baby-car-seat) | DE | jsonld | ✅ | 193.40 EUR | 191 | 1 | jsonld | Cybex Cloud T i-Size baby car seat |
 | car_seat | [kindermaxx_ch](https://www.kindermaxx.de/en/car-seats/baby-car-seat-0-13-kg/cybex-cloud-t-i-size-baby-car-seat) | DE | jsonld | ✅ | 191.96 CHF | 205 | 1 | jsonld | Cybex Cloud T i-Size baby car seat |
 | car_seat | [mysnowflake_ch](https://mysnowflake.ch/en/collections/cybex/products/cybex-cloud-t-i-size-plus-babyschale-sepia-black) | CH | jsonld | ✅ | 279.00 CHF | 279 | 1 | jsonld | Cybex Cloud T i-Size Plus Infant Car Seat Sepia Black |
 | car_seat | [bambinou_fr](https://www.bambinou.com/siege-auto-cloud-t-i-size-groupe-0-plus-cybex) | FR | jsonld | ✅ | 214.90 EUR | 237 | 1 | jsonld | Siège-auto Cloud T i-Size groupe 0+ - Mirage Grey |
@@ -58,8 +58,8 @@ Cheapest complete set: **2122.14 CHF** (complete=True)
 
 ```json
 {
-  "value": 2122.14,
-  "partial_value": 2122.14,
+  "value": 2115.63,
+  "partial_value": 2115.63,
   "complete": true,
   "items": [
     {
@@ -75,7 +75,7 @@ Cheapest complete set: **2122.14 CHF** (complete=True)
       "in_stock": true,
       "country": "DE",
       "vat_refund": "unknown",
-      "fetched_at": "2026-11-08T11:57:56+00:00",
+      "fetched_at": "2026-11-09T13:56:41+00:00",
       "shipping": 0.0
     },
     {
@@ -84,14 +84,14 @@ Cheapest complete set: **2122.14 CHF** (complete=True)
       "source": "kindermaxx_de",
       "seller": "Kindermaxx DE",
       "url": "https://www.kindermaxx.de/en/car-seats/baby-car-seat-0-13-kg/cybex-cloud-t-i-size-baby-car-seat",
-      "landed": 197.66,
-      "landed_no_refund": 197.66,
-      "sticker": 199.99,
+      "landed": 191.15,
+      "landed_no_refund": 191.15,
+      "sticker": 193.4,
       "currency": "EUR",
       "in_stock": true,
       "country": "DE",
       "vat_refund": "unknown",
-      "fetched_at": "2026-11-08T11:57:36+00:00",
+      "fetched_at": "2026-11-09T13:56:16+00:00",
       "shipping": 0.0
     },
     {
@@ -107,7 +107,7 @@ Cheapest complete set: **2122.14 CHF** (complete=True)
       "in_stock": true,
       "country": "DE",
       "vat_refund": "unknown",
-      "fetched_at": "2026-11-08T11:57:45+00:00",
+      "fetched_at": "2026-11-09T13:56:28+00:00",
       "shipping": 12.95
     }
   ],
@@ -129,7 +129,7 @@ Cheapest complete set: **2122.14 CHF** (complete=True)
         "in_stock": true,
         "country": "CH",
         "vat_refund": "unknown",
-        "fetched_at": "2026-11-08T11:56:58+00:00",
+        "fetched_at": "2026-11-09T13:55:41+00:00",
         "shipping": 0.0
       },
       {
@@ -145,7 +145,7 @@ Cheapest complete set: **2122.14 CHF** (complete=True)
         "in_stock": true,
         "country": "CH",
         "vat_refund": "unknown",
-        "fetched_at": "2026-11-08T11:57:03+00:00",
+        "fetched_at": "2026-11-09T13:55:45+00:00",
         "shipping": 0.0
       },
       {
@@ -161,7 +161,7 @@ Cheapest complete set: **2122.14 CHF** (complete=True)
         "in_stock": true,
         "country": "CH",
         "vat_refund": "unknown",
-        "fetched_at": "2026-11-08T11:57:05+00:00",
+        "fetched_at": "2026-11-09T13:55:47+00:00",
         "shipping": 0.0
       },
       {
@@ -177,7 +177,7 @@ Cheapest complete set: **2122.14 CHF** (complete=True)
         "in_stock": true,
         "country": "CH",
         "vat_refund": "unknown",
-        "fetched_at": "2026-11-08T11:57:15+00:00",
+        "fetched_at": "2026-11-09T13:55:57+00:00",
         "shipping": 0.0
       },
       {
@@ -193,7 +193,7 @@ Cheapest complete set: **2122.14 CHF** (complete=True)
         "in_stock": true,
         "country": "CH",
         "vat_refund": "unknown",
-        "fetched_at": "2026-11-08T11:57:41+00:00",
+        "fetched_at": "2026-11-09T13:56:23+00:00",
         "shipping": 0.0
       }
     ]

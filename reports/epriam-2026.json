@@ -1,5 +1,5 @@
 {
-  "ts": "2026-11-08T11:58:12+00:00",
+  "ts": "2026-11-09T13:56:54+00:00",
   "product": "epriam-2026",
   "ok": 42,
   "total": 47,
@@ -335,9 +335,9 @@
       "parser": "jsonld",
       "enabled": true,
       "ok": true,
-      "sticker": 199.99,
+      "sticker": 193.4,
       "currency": "EUR",
-      "landed": 197.66,
+      "landed": 191.15,
       "in_stock": 1,
       "method": "jsonld",
       "title": "Cybex Cloud T i-Size baby car seat",
@@ -805,8 +805,8 @@
     }
   ],
   "snapshot_total": {
-    "value": 2122.14,
-    "partial_value": 2122.14,
+    "value": 2115.63,
+    "partial_value": 2115.63,
     "complete": true,
     "items": [
       {
@@ -822,7 +822,7 @@
         "in_stock": true,
         "country": "DE",
         "vat_refund": "unknown",
-        "fetched_at": "2026-11-08T11:57:56+00:00",
+        "fetched_at": "2026-11-09T13:56:41+00:00",
         "shipping": 0.0
       },
       {
@@ -831,14 +831,14 @@
         "source": "kindermaxx_de",
         "seller": "Kindermaxx DE",
         "url": "https://www.kindermaxx.de/en/car-seats/baby-car-seat-0-13-kg/cybex-cloud-t-i-size-baby-car-seat",
-        "landed": 197.66,
-        "landed_no_refund": 197.66,
-        "sticker": 199.99,
+        "landed": 191.15,
+        "landed_no_refund": 191.15,
+        "sticker": 193.4,
         "currency": "EUR",
         "in_stock": true,
         "country": "DE",
         "vat_refund": "unknown",
-        "fetched_at": "2026-11-08T11:57:36+00:00",
+        "fetched_at": "2026-11-09T13:56:16+00:00",
         "shipping": 0.0
       },
       {
@@ -854,7 +854,7 @@
         "in_stock": true,
         "country": "DE",
         "vat_refund": "unknown",
-        "fetched_at": "2026-11-08T11:57:45+00:00",
+        "fetched_at": "2026-11-09T13:56:28+00:00",
         "shipping": 12.95
       }
     ],
@@ -876,7 +876,7 @@
           "in_stock": true,
           "country": "CH",
           "vat_refund": "unknown",
-          "fetched_at": "2026-11-08T11:56:58+00:00",
+          "fetched_at": "2026-11-09T13:55:41+00:00",
           "shipping": 0.0
         },
         {
@@ -892,7 +892,7 @@
           "in_stock": true,
           "country": "CH",
           "vat_refund": "unknown",
-          "fetched_at": "2026-11-08T11:57:03+00:00",
+          "fetched_at": "2026-11-09T13:55:45+00:00",
           "shipping": 0.0
         },
         {
@@ -908,7 +908,7 @@
           "in_stock": true,
           "country": "CH",
           "vat_refund": "unknown",
-          "fetched_at": "2026-11-08T11:57:05+00:00",
+          "fetched_at": "2026-11-09T13:55:47+00:00",
           "shipping": 0.0
         },
         {
@@ -924,7 +924,7 @@
           "in_stock": true,
           "country": "CH",
           "vat_refund": "unknown",
-          "fetched_at": "2026-11-08T11:57:15+00:00",
+          "fetched_at": "2026-11-09T13:55:57+00:00",
           "shipping": 0.0
         },
         {
@@ -940,7 +940,7 @@
           "in_stock": true,
           "country": "CH",
           "vat_refund": "unknown",
-          "fetched_at": "2026-11-08T11:57:41+00:00",
+          "fetched_at": "2026-11-09T13:56:23+00:00",
           "shipping": 0.0
         }
       ]
