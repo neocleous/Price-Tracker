@@ -1,6 +1,6 @@
 # Source validation — Cybex e-Priam 2026
 
-Run: 2026-11-14T12:13:57+00:00  
+Run: 2026-11-15T12:47:03+00:00  
 Sources OK: **42/47**  
 Cheapest complete set: **1977.84 CHF** (complete=True)
 
@@ -75,7 +75,7 @@ Cheapest complete set: **1977.84 CHF** (complete=True)
       "in_stock": true,
       "country": "DE",
       "vat_refund": "unknown",
-      "fetched_at": "2026-11-14T12:13:43+00:00",
+      "fetched_at": "2026-11-15T12:46:50+00:00",
       "shipping": 12.95
     },
     {
@@ -91,7 +91,7 @@ Cheapest complete set: **1977.84 CHF** (complete=True)
       "in_stock": true,
       "country": "CH",
       "vat_refund": "unknown",
-      "fetched_at": "2026-11-14T12:13:00+00:00",
+      "fetched_at": "2026-11-15T12:46:08+00:00",
       "shipping": 0.0
     },
     {
@@ -107,7 +107,7 @@ Cheapest complete set: **1977.84 CHF** (complete=True)
       "in_stock": true,
       "country": "DE",
       "vat_refund": "unknown",
-      "fetched_at": "2026-11-14T12:13:29+00:00",
+      "fetched_at": "2026-11-15T12:46:36+00:00",
       "shipping": 12.95
     },
     {
@@ -134,7 +134,7 @@ Cheapest complete set: **1977.84 CHF** (complete=True)
         "in_stock": true,
         "country": "CH",
         "vat_refund": "unknown",
-        "fetched_at": "2026-11-14T12:12:42+00:00",
+        "fetched_at": "2026-11-15T12:45:48+00:00",
         "shipping": 0.0
       },
       {
@@ -150,7 +150,7 @@ Cheapest complete set: **1977.84 CHF** (complete=True)
         "in_stock": true,
         "country": "CH",
         "vat_refund": "unknown",
-        "fetched_at": "2026-11-14T12:12:47+00:00",
+        "fetched_at": "2026-11-15T12:45:54+00:00",
         "shipping": 0.0
       },
       {
@@ -166,7 +166,7 @@ Cheapest complete set: **1977.84 CHF** (complete=True)
         "in_stock": true,
         "country": "CH",
         "vat_refund": "unknown",
-        "fetched_at": "2026-11-14T12:12:49+00:00",
+        "fetched_at": "2026-11-15T12:45:57+00:00",
         "shipping": 0.0
       },
       {
@@ -182,7 +182,7 @@ Cheapest complete set: **1977.84 CHF** (complete=True)
         "in_stock": true,
         "country": "CH",
         "vat_refund": "unknown",
-        "fetched_at": "2026-11-14T12:13:00+00:00",
+        "fetched_at": "2026-11-15T12:46:08+00:00",
         "shipping": 0.0
       },
       {
@@ -198,7 +198,7 @@ Cheapest complete set: **1977.84 CHF** (complete=True)
         "in_stock": true,
         "country": "CH",
         "vat_refund": "unknown",
-        "fetched_at": "2026-11-14T12:13:22+00:00",
+        "fetched_at": "2026-11-15T12:46:31+00:00",
         "shipping": 0.0
       }
     ]
