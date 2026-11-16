@@ -1,6 +1,6 @@
 # Source validation — Cybex e-Priam 2026
 
-Run: 2026-11-15T12:47:03+00:00  
+Run: 2026-11-16T13:41:40+00:00  
 Sources OK: **42/47**  
 Cheapest complete set: **1977.84 CHF** (complete=True)
 
@@ -31,7 +31,7 @@ Cheapest complete set: **1977.84 CHF** (complete=True)
 | car_seat | [bambinou_fr](https://www.bambinou.com/siege-auto-cloud-t-i-size-groupe-0-plus-cybex) | FR | jsonld | ✅ | 214.90 EUR | 240 | 1 | jsonld | Siège-auto Cloud T i-Size groupe 0+ - Mirage Grey |
 | base_t | [cybex_ch](https://www.cybex-online.com/de/ch/p/cs-pl-base-t.html) | CH | jsonld | ✅ | 229.00 CHF | 229 | 1 | jsonld | Base T - Black |
 | base_t | [cybex_de](https://www.cybex-online.com/de/de/p/cs-pl-base-t.html) | DE | jsonld | ✅ | 219.95 EUR | 220 | 1 | jsonld | Base T - Black |
-| base_t | [babywalz_ch](https://www.baby-walz.ch/de/p/cybex-platinum-isofix-basis-base-t-fuer-cloud-t-sirona-t-7860536/) | CH | jsonld | ✅ | 229.95 CHF | 230 | 1 | jsonld | Isofix-Basis Base T für Cloud T, Sirona T |
+| base_t | [babywalz_ch](https://www.baby-walz.ch/de/p/cybex-platinum-isofix-basis-base-t-fuer-cloud-t-sirona-t-7860536/) | CH | jsonld | ✅ | 203.95 CHF | 204 | 1 | jsonld | Isofix-Basis Base T für Cloud T, Sirona T |
 | base_t | [babywalz_de](https://www.baby-walz.de/p/cybex-platinum-isofix-basis-base-t-fuer-cloud-t-sirona-t-7860536/) | DE | jsonld | ❌ |  |  | None |  | FetchError: HTTP 429 |
 | base_t | [kindermaxx_de](https://www.kindermaxx.de/en/car-seats/isofix-base/cybex-base-t-i-size-base-station) | DE | jsonld | ✅ | 199.00 EUR | 199 | 1 | jsonld | Cybex Base T i-Size Base Station |
 | base_t | [kindermaxx_ch](https://www.kindermaxx.de/en/car-seats/isofix-base/cybex-base-t-i-size-base-station) | DE | jsonld | ✅ | 184.39 CHF | 197 | 1 | jsonld | Cybex Base T i-Size Base Station |
@@ -75,7 +75,7 @@ Cheapest complete set: **1977.84 CHF** (complete=True)
       "in_stock": true,
       "country": "DE",
       "vat_refund": "unknown",
-      "fetched_at": "2026-11-15T12:46:50+00:00",
+      "fetched_at": "2026-11-16T13:41:29+00:00",
       "shipping": 12.95
     },
     {
@@ -91,7 +91,7 @@ Cheapest complete set: **1977.84 CHF** (complete=True)
       "in_stock": true,
       "country": "CH",
       "vat_refund": "unknown",
-      "fetched_at": "2026-11-15T12:46:08+00:00",
+      "fetched_at": "2026-11-16T13:40:44+00:00",
       "shipping": 0.0
     },
     {
@@ -107,7 +107,7 @@ Cheapest complete set: **1977.84 CHF** (complete=True)
       "in_stock": true,
       "country": "DE",
       "vat_refund": "unknown",
-      "fetched_at": "2026-11-15T12:46:36+00:00",
+      "fetched_at": "2026-11-16T13:41:13+00:00",
       "shipping": 12.95
     },
     {
@@ -117,8 +117,8 @@ Cheapest complete set: **1977.84 CHF** (complete=True)
     }
   ],
   "home": {
-    "value": 2335.0,
-    "partial_value": 2335.0,
+    "value": 2309.95,
+    "partial_value": 2309.95,
     "complete": true,
     "items": [
       {
@@ -134,7 +134,7 @@ Cheapest complete set: **1977.84 CHF** (complete=True)
         "in_stock": true,
         "country": "CH",
         "vat_refund": "unknown",
-        "fetched_at": "2026-11-15T12:45:48+00:00",
+        "fetched_at": "2026-11-16T13:40:29+00:00",
         "shipping": 0.0
       },
       {
@@ -150,7 +150,7 @@ Cheapest complete set: **1977.84 CHF** (complete=True)
         "in_stock": true,
         "country": "CH",
         "vat_refund": "unknown",
-        "fetched_at": "2026-11-15T12:45:54+00:00",
+        "fetched_at": "2026-11-16T13:40:33+00:00",
         "shipping": 0.0
       },
       {
@@ -166,7 +166,7 @@ Cheapest complete set: **1977.84 CHF** (complete=True)
         "in_stock": true,
         "country": "CH",
         "vat_refund": "unknown",
-        "fetched_at": "2026-11-15T12:45:57+00:00",
+        "fetched_at": "2026-11-16T13:40:36+00:00",
         "shipping": 0.0
       },
       {
@@ -182,23 +182,23 @@ Cheapest complete set: **1977.84 CHF** (complete=True)
         "in_stock": true,
         "country": "CH",
         "vat_refund": "unknown",
-        "fetched_at": "2026-11-15T12:46:08+00:00",
+        "fetched_at": "2026-11-16T13:40:44+00:00",
         "shipping": 0.0
       },
       {
         "kind": "component",
         "id": "base_t",
-        "source": "cybex_ch",
-        "seller": "Cybex CH",
-        "url": "https://www.cybex-online.com/de/ch/p/cs-pl-base-t.html",
-        "landed": 229.0,
-        "landed_no_refund": 229.0,
-        "sticker": 229.0,
+        "source": "babywalz_ch",
+        "seller": "baby-walz CH",
+        "url": "https://www.baby-walz.ch/de/p/cybex-platinum-isofix-basis-base-t-fuer-cloud-t-sirona-t-7860536/",
+        "landed": 203.95,
+        "landed_no_refund": 203.95,
+        "sticker": 203.95,
         "currency": "CHF",
         "in_stock": true,
         "country": "CH",
         "vat_refund": "unknown",
-        "fetched_at": "2026-11-15T12:46:31+00:00",
+        "fetched_at": "2026-11-16T13:41:09+00:00",
         "shipping": 0.0
       }
     ]

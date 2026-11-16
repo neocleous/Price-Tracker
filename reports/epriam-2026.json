@@ -1,5 +1,5 @@
 {
-  "ts": "2026-11-15T12:47:03+00:00",
+  "ts": "2026-11-16T13:41:40+00:00",
   "product": "epriam-2026",
   "ok": 42,
   "total": 47,
@@ -437,9 +437,9 @@
       "parser": "jsonld",
       "enabled": true,
       "ok": true,
-      "sticker": 229.95,
+      "sticker": 203.95,
       "currency": "CHF",
-      "landed": 229.95,
+      "landed": 203.95,
       "in_stock": 1,
       "method": "jsonld",
       "title": "Isofix-Basis Base T für Cloud T, Sirona T",
@@ -822,7 +822,7 @@
         "in_stock": true,
         "country": "DE",
         "vat_refund": "unknown",
-        "fetched_at": "2026-11-15T12:46:50+00:00",
+        "fetched_at": "2026-11-16T13:41:29+00:00",
         "shipping": 12.95
       },
       {
@@ -838,7 +838,7 @@
         "in_stock": true,
         "country": "CH",
         "vat_refund": "unknown",
-        "fetched_at": "2026-11-15T12:46:08+00:00",
+        "fetched_at": "2026-11-16T13:40:44+00:00",
         "shipping": 0.0
       },
       {
@@ -854,7 +854,7 @@
         "in_stock": true,
         "country": "DE",
         "vat_refund": "unknown",
-        "fetched_at": "2026-11-15T12:46:36+00:00",
+        "fetched_at": "2026-11-16T13:41:13+00:00",
         "shipping": 12.95
       },
       {
@@ -864,8 +864,8 @@
       }
     ],
     "home": {
-      "value": 2335.0,
-      "partial_value": 2335.0,
+      "value": 2309.95,
+      "partial_value": 2309.95,
       "complete": true,
       "items": [
         {
@@ -881,7 +881,7 @@
           "in_stock": true,
           "country": "CH",
           "vat_refund": "unknown",
-          "fetched_at": "2026-11-15T12:45:48+00:00",
+          "fetched_at": "2026-11-16T13:40:29+00:00",
           "shipping": 0.0
         },
         {
@@ -897,7 +897,7 @@
           "in_stock": true,
           "country": "CH",
           "vat_refund": "unknown",
-          "fetched_at": "2026-11-15T12:45:54+00:00",
+          "fetched_at": "2026-11-16T13:40:33+00:00",
           "shipping": 0.0
         },
         {
@@ -913,7 +913,7 @@
           "in_stock": true,
           "country": "CH",
           "vat_refund": "unknown",
-          "fetched_at": "2026-11-15T12:45:57+00:00",
+          "fetched_at": "2026-11-16T13:40:36+00:00",
           "shipping": 0.0
         },
         {
@@ -929,23 +929,23 @@
           "in_stock": true,
           "country": "CH",
           "vat_refund": "unknown",
-          "fetched_at": "2026-11-15T12:46:08+00:00",
+          "fetched_at": "2026-11-16T13:40:44+00:00",
           "shipping": 0.0
         },
         {
           "kind": "component",
           "id": "base_t",
-          "source": "cybex_ch",
-          "seller": "Cybex CH",
-          "url": "https://www.cybex-online.com/de/ch/p/cs-pl-base-t.html",
-          "landed": 229.0,
-          "landed_no_refund": 229.0,
-          "sticker": 229.0,
+          "source": "babywalz_ch",
+          "seller": "baby-walz CH",
+          "url": "https://www.baby-walz.ch/de/p/cybex-platinum-isofix-basis-base-t-fuer-cloud-t-sirona-t-7860536/",
+          "landed": 203.95,
+          "landed_no_refund": 203.95,
+          "sticker": 203.95,
           "currency": "CHF",
           "in_stock": true,
           "country": "CH",
           "vat_refund": "unknown",
-          "fetched_at": "2026-11-15T12:46:31+00:00",
+          "fetched_at": "2026-11-16T13:41:09+00:00",
           "shipping": 0.0
         }
       ]
